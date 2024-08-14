@@ -20,8 +20,12 @@ declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
       id: string;
-      // ...other properties
-      // role: UserRole;
+      // name: string;
+      // email: string;
+      // image?: string;
+      darkMode?: boolean;
+      /** @TODO change this to `Array<Team>` */
+      teams?: Array<string>;
     } & DefaultSession["user"];
   }
 
