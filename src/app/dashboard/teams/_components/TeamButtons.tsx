@@ -1,12 +1,35 @@
+"use client";
+
+import { PropsWithChildren } from "react";
 import { Team } from "@prisma/client";
 import Button from "@designsystem/button";
 
-function ButtonsContainer({ children }: { children: React.ReactNode }) {
+function ButtonsContainer({ children }: PropsWithChildren) {
   return (
     <div
       className={`flex max-w-[90%] flex-row flex-wrap items-center justify-evenly gap-4 font-serif`}
     >
       {children}
+    </div>
+  );
+}
+
+function TextWithIcon({
+  icon,
+  text,
+  transform,
+}: {
+  icon: string;
+  text: string;
+  transform: React.CSSProperties;
+}) {
+  return (
+    <div className={`flex justify-center`}>
+      <span>{`${text} (`}</span>
+      <div className={`flex justify-center`} style={transform}>
+        <span className={"h-[24px] w-[24px]"}>{icon}</span>
+      </div>
+      <span>{`)`}</span>
     </div>
   );
 }
@@ -67,30 +90,23 @@ export function NewTeamButton({
 }) {
   return (
     <Button onClick={handleClick} theme="transparent-hover">
-      <div className={`flex justify-center`}>
-        <span>{`${addTeam ? "click to hide" : "create new team"} (`}</span>
-        <div
-          className={`flex justify-center`}
-          style={
-            addTeam
-              ? {
-                  transform: "rotateZ(360deg)",
-                  transition: ".2s transform",
-                  width: "24px",
-                }
-              : {
-                  transform: "rotateZ(-360deg)",
-                  transition: ".2s transform",
-                  width: "24px",
-                }
-          }
-        >
-          <span style={{ width: "24px", height: "24px" }}>
-            {addTeam ? "-" : "+"}
-          </span>
-        </div>
-        <span>{`)`}</span>
-      </div>
+      <TextWithIcon
+        icon={addTeam ? "-" : "+"}
+        text={addTeam ? "click to hide" : "create new team"}
+        transform={
+          addTeam
+            ? {
+                transform: "rotateZ(360deg)",
+                transition: ".2s transform",
+                width: "24px",
+              }
+            : {
+                transform: "rotateZ(-360deg)",
+                transition: ".2s transform",
+                width: "24px",
+              }
+        }
+      />
     </Button>
   );
 }
