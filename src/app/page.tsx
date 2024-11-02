@@ -6,7 +6,7 @@ export default async function Home() {
 
   return (
     <HydrateClient>
-      <div>
+      <div className="bg-[#374151]">
         <h1>MyDraft Partner 2024</h1>
         <p>2024 Fantasy Football draft hub</p>
         {/* <ul>
@@ -14,7 +14,7 @@ export default async function Home() {
             <li key={player.id}>{player.name}</li>
           ))}
         </ul> */}
-        <div className="h-screen w-screen">
+        <div className="h-full w-full">
           <FieldBackground />
         </div>
       </div>
