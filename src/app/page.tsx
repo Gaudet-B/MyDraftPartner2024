@@ -14,9 +14,7 @@ export default async function Home() {
             <li key={player.id}>{player.name}</li>
           ))}
         </ul> */}
-        <div className="h-full w-full">
-          <FieldBackground />
-        </div>
+        <FieldBackground />
       </div>
     </HydrateClient>
   );

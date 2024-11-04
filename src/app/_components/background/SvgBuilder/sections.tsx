@@ -2,6 +2,40 @@ import { PropsWithChildren } from "react";
 import { get2YdMarker } from "./BgSvgBuilder";
 import { HASH_LENGTH, HASH_POSITIONS } from "../dimensions";
 
+export function SVG({
+  children,
+  baseScale,
+  height,
+  width,
+  showSvg,
+  svgRef,
+}: PropsWithChildren<{
+  height: number;
+  width: number;
+  showSvg: boolean;
+  svgRef: React.RefObject<SVGSVGElement>;
+  baseScale?: number;
+}>) {
+  return (
+    <svg
+      ref={svgRef}
+      id={"MDP-field-image"}
+      xmlns="http://www.w3.org/2000/svg"
+      width={width}
+      // width={height * 0.68}
+      height={height}
+      // transform={`scale(${baseScale})`}
+      transform={`translate(0, -600) scale(${baseScale ?? 0.6})`}
+      // transform={`translate(${-100},${-700}) scale(0.6)`}
+      // transform={`translate(${200},${500}) scale(4)`}
+      // transform={transform(t)}
+      className="transition-all duration-[1000ms] ease-out"
+    >
+      {showSvg ? children : null}
+    </svg>
+  );
+}
+
 export function FieldLines({
   children,
   svgRef,
@@ -200,6 +234,22 @@ export function Sidelines({
   return (
     <g stroke="white" strokeWidth={6}>
       <path d={`M 0 0 H ${fieldWidth} V ${fieldHeight} H 0 V 0`} fill="none" />
+    </g>
+  );
+}
+
+export function Midfield({ x, y }: { x: number; y: number }) {
+  return (
+    <g>
+      <circle
+        cx={x}
+        cy={y}
+        r={70}
+        // fill="gray"
+        strokeWidth={4}
+        // className={"fill-[#374151] stroke-white"}
+        className={"fill-none stroke-white"}
+      />
     </g>
   );
 }
