@@ -2,6 +2,41 @@ import { PropsWithChildren } from "react";
 import { get2YdMarker } from "./BgSvgBuilder";
 import { HASH_LENGTH, HASH_POSITIONS } from "../dimensions";
 
+const INNER_HEIGHT = 50 as const;
+const OUTER_HEIGHT = 60 as const;
+
+const INNER_COLOR = "white" as const;
+const OUTER_COLOR = "white" as const;
+
+function LoadingProgress({
+  height = 2100,
+  width = 1433,
+  progressBar = false,
+}: {
+  height: number;
+  width: number;
+  progressBar: boolean;
+}) {
+  const length = width / 2;
+
+  return (
+    <g transform={`translate(${width / 3}, ${height / 5})`}>
+      <path
+        d={`M 0 0 H ${length} V ${OUTER_HEIGHT} H 0 V 0 Z`}
+        stroke={OUTER_COLOR}
+        strokeWidth={4}
+        fill="none"
+      />
+      <path
+        d={`M 0 10 H ${progressBar ? length : "0"} V ${INNER_HEIGHT} H 0 V 10 Z`}
+        stroke="none"
+        fill={INNER_COLOR}
+        className="ease transition-all duration-[1000ms]"
+      />
+    </g>
+  );
+}
+
 export function SVG({
   children,
   baseScale,
@@ -9,11 +44,13 @@ export function SVG({
   width,
   showSvg,
   svgRef,
+  progressBar,
 }: PropsWithChildren<{
   height: number;
   width: number;
   showSvg: boolean;
   svgRef: React.RefObject<SVGSVGElement>;
+  progressBar: boolean;
   baseScale?: number;
 }>) {
   return (
@@ -31,7 +68,15 @@ export function SVG({
       // transform={transform(t)}
       className="transition-all duration-[1000ms] ease-out"
     >
-      {showSvg ? children : null}
+      {showSvg ? (
+        children
+      ) : (
+        <LoadingProgress
+          height={height}
+          width={width}
+          progressBar={progressBar}
+        />
+      )}
     </svg>
   );
 }
@@ -61,10 +106,8 @@ export function EndZones({
       {/* Top End Zone */}
       <path
         d={`M 0 0 H ${fieldWidth} V ${sectionHeight} H 0 Z`}
-        // className="fill-gray-700"
-        // className="fill-sky-900"
-        // fill="#456F16"
-        fill="none"
+        className="fill-sky-900"
+        // fill="none"
         // opacity={0.6}
       />
       {/* Top Goal Line */}
@@ -72,9 +115,8 @@ export function EndZones({
       {/* Bottom End Zone */}
       <path
         d={`M 0 ${11 * sectionHeight} H ${fieldWidth} V ${12 * sectionHeight} H 0 Z`}
-        // className="fill-gray-700"
-        // className="fill-red-900"
-        fill="none"
+        className="fill-red-900"
+        // fill="none"
         // opacity={0.6}
       />
       {/* Bottom Goal Line */}
@@ -97,28 +139,24 @@ export function YardLines({ children }: PropsWithChildren) {
 }
 
 export function FieldSection({
-  // bgColor,
   children,
   fieldWidth,
   sectionHeight,
   start,
   i,
 }: PropsWithChildren<{
-  // bgColor: string;
   fieldWidth: number;
   sectionHeight: number;
   start: number;
   i: number;
 }>) {
-  // const fill = ;
-
   return (
     <g id={`field-section-${i}`} key={`field-section-${i}`}>
       {/* Section Background Color */}
       <path
         d={`M 0 ${start} H ${fieldWidth} V ${start + sectionHeight} H 0 Z`}
-        // fill={i % 2 === 0 ? "#4F8918" : "#456F16"}
-        fill="none"
+        fill={i % 2 === 0 ? "#4F8918" : "#456F16"}
+        // fill="none"
         stroke="none"
       />
       <line x1={0} y1={start} x2={fieldWidth} y2={start} />
@@ -245,7 +283,6 @@ export function Midfield({ x, y }: { x: number; y: number }) {
         cx={x}
         cy={y}
         r={70}
-        // fill="gray"
         strokeWidth={4}
         // className={"fill-[#374151] stroke-white"}
         className={"fill-none stroke-white"}

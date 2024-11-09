@@ -1,5 +1,3 @@
-"use client";
-
 import { PropsWithChildren } from "react";
 import { Team } from "@prisma/client";
 import Button from "@designsystem/button";
@@ -38,20 +36,22 @@ function TeamButton({
   activeTeam,
   idx,
   name,
+  teamId,
   handleClick,
 }: {
-  activeTeam?: string;
+  activeTeam?: Team["id"];
   idx: number;
   name: Team["name"];
+  teamId: Team["id"];
   handleClick: () => void;
 }) {
   return (
     <Button
       key={`team-${name}-${idx}-button`}
       onClick={handleClick}
-      theme={activeTeam === name ? "action-lg" : "transparent-hover"}
+      theme={activeTeam === teamId ? "action-lg" : "transparent-hover"}
       additionalClasses={
-        activeTeam === name ? "scale-100 font-mono" : "scale-80 font-mono"
+        activeTeam === teamId ? "scale-100 font-mono" : "scale-80 font-mono"
       }
       children={name}
     />
@@ -64,8 +64,8 @@ export function TeamButtons({
   handleClick,
 }: {
   teams: Array<Team>;
-  activeTeam?: Team["name"];
-  handleClick: (n: Team["name"]) => void;
+  activeTeam?: Team["id"];
+  handleClick: (id: Team["id"]) => void;
 }) {
   return (
     <ButtonsContainer>
@@ -73,8 +73,9 @@ export function TeamButtons({
         <TeamButton
           idx={idx}
           name={team.name}
+          teamId={team.id}
           activeTeam={activeTeam}
-          handleClick={() => handleClick(team.name)}
+          handleClick={() => handleClick(team.id)}
         />
       ))}
     </ButtonsContainer>

@@ -8,8 +8,8 @@ import {
 
 export const teamRouter = createTRPCRouter({
   /** @TODO revert back to protectedProcedure */
-  getAllTeamsByPlayer: publicProcedure.query(async ({ ctx }) => {
-    // getAllTeamsByPlayer: protectedProcedure.query(async ({ ctx }) => {
+  getAllTeamsByUser: publicProcedure.query(async ({ ctx }) => {
+    // getAllTeamsByUser: protectedProcedure.query(async ({ ctx }) => {
     // .input(z.object({ userId: z.string() }))
     /** @TODO would it be better to get 'userId' from server? */
     const teams = await ctx.db.team.findMany({
@@ -25,6 +25,54 @@ export const teamRouter = createTRPCRouter({
       return ctx.db.team.findUnique({
         where: {
           id: input.id,
+        },
+      });
+    }),
+  /** @TODO revert back to protectedProcedure */
+  // createTeam: protectedProcedure
+  createTeam: publicProcedure
+    .input(
+      z.object({
+        name: z.string(),
+        settings: z.object({}),
+        league: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const userId = ctx.session?.user.id;
+      if (!userId) {
+        /** @TODO best way to handle this potential error? */
+        throw new Error("User not found");
+      }
+      return ctx.db.team.create({
+        data: {
+          name: input.name,
+          settings: input.settings,
+          league: input.league,
+          userId,
+        },
+      });
+    }),
+  /** @TODO revert back to protectedProcedure */
+  // updateTeam: protectedProcedure
+  updateTeam: publicProcedure
+    .input(
+      z.object({
+        id: z.number(),
+        name: z.string(),
+        settings: z.object({}),
+        league: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db.team.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          name: input.name,
+          settings: input.settings,
+          league: input.league,
         },
       });
     }),
