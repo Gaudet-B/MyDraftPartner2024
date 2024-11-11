@@ -1,10 +1,9 @@
 "use client";
 
-// import ContentContainer from "@designsystem/container/ContentContainer";
-import { getServerAuthSession } from "~/server/auth";
 import { useThemeAtom } from "./atoms";
 import { useAtom } from "jotai";
 import { useMemo } from "react";
+import UserIcon from "../_components/design-system/icons/UserIcon";
 
 /** @TODO import 'fieldIcon' */
 const fieldIcon = "";
@@ -35,19 +34,22 @@ export default async function DashBoardContent({
   // const session = await getServerAuthSession();
   // const hasDarkMode = session?.user.darkMode;
 
-  const [themeAtom, setThemeAtom] = useAtom(useThemeAtom);
-  const darkMode = useMemo(() => {
-    const theme = hasDarkMode ? "dark" : "light";
-    if (themeAtom !== theme) setThemeAtom(theme);
-    return theme === "dark";
-  }, [hasDarkMode]);
+  const [themeAtom] = useAtom(useThemeAtom);
+  // const darkMode = useMemo(() => {
+  //   const theme = hasDarkMode ? "dark" : "light";
+  //   if (themeAtom !== theme) setThemeAtom(theme);
+  //   return theme === "dark";
+  // }, [hasDarkMode]);
 
   return (
     /** @TODO THIS IS A PLACEHOLDER AND NEEDS A NEW DESIGN - old one is just an array of enlarged buttons :(  */
-    <div>
+    <div className="h-full w-full">
       <h1>Dashboard</h1>
+      <div className="flex h-full w-full justify-center">
+        {/* <UserIcon />
+        <UserIcon isBaller />
+        <UserIcon /> */}
+      </div>
     </div>
   );
-
-  // return <ContentContainer children={content} darkMode={darkMode} />;
 }

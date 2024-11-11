@@ -97,7 +97,7 @@ export default function Button({
 
   return (
     <button
-      className={`rounded-xl px-2 py-1 ${buttonClasses} ${underline ? "underline" : ""} ${bold ? "font-semibold" : ""} ${additionalClasses}`}
+      className={`cursor-pointer rounded-xl px-2 py-1 ${buttonClasses} ${underline ? "underline" : ""} ${bold ? "font-semibold" : ""} ${additionalClasses}`}
       disabled={disabled}
       onClick={(e) => handleClick(e)}
     >

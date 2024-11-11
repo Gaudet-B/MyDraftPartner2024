@@ -24,7 +24,7 @@ declare module "next-auth" {
       // email: string;
       // image?: string;
       darkMode?: boolean;
-      /** @TODO change this to `Array<Team>` */
+      /** @TODO change this to `Array<Team>` ??? or just let it be an array of IDs/ */
       teams?: Array<string>;
     } & DefaultSession["user"];
   }

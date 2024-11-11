@@ -12,16 +12,17 @@ export type FormValuesType = {
   name: string;
   league: string;
   roster: RosterType;
-  settings: {
-    numOfTeams: number;
-    draftPosition: number;
-    ppr: boolean | number;
-    superflex: boolean;
-    // roster: number
-    // scoring: string
-    // playoffTeams: number
-    // playoffWeeks: number
-  };
+  settings: TeamSettingsType;
+  // settings: {
+  //   numOfTeams: number;
+  //   draftPosition: number;
+  //   ppr: boolean | number;
+  //   superflex: boolean;
+  //   // roster: number
+  //   // scoring: string
+  //   // playoffTeams: number
+  //   // playoffWeeks: number
+  // };
 };
 
 export default function TeamForm({
@@ -36,7 +37,7 @@ export default function TeamForm({
   formValues?: FormValuesType;
   handleFieldChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleSettingsChange: (settings: TeamSettingsType) => void;
-  handleSubmit: (t: FormValuesType) => void;
+  handleSubmit: () => void;
   setShowSettings: (value: boolean) => void;
   isModal: boolean;
   showSettings: boolean;
@@ -74,10 +75,7 @@ export default function TeamForm({
           />
         )}
       </FormContainer>
-      <FormButton
-        handleSubmit={() => formValues && handleSubmit(formValues)}
-        isModal={isModal}
-      />
+      <FormButton handleSubmit={handleSubmit} isModal={isModal} />
     </>
   );
 }

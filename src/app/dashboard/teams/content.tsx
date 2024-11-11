@@ -2,7 +2,8 @@
 
 import { useMemo, useState } from "react";
 import { Team } from "@prisma/client";
-import { api } from "~/trpc/server";
+// import { api } from "~/utils/api";
+import { api } from "~/trpc/react";
 import { NewTeamButton, TeamButtons } from "./_components/TeamButtons";
 import { TeamSettings as TeamSettingsType } from "./_components/TeamInfo/info";
 import { FormValuesType } from "./_components/TeamForm/form";
@@ -17,10 +18,21 @@ export default function TeamsContent({ teams }: { teams: Array<TeamType> }) {
   const [activeTeam, setActiveTeam] = useState<Team["id"]>();
   const [showForm, setShowForm] = useState<boolean>(false);
   const [showSettings, setShowSettings] = useState<boolean>(false);
+  // const [teamsList, setTeamsList] = useState<Array<TeamType>>(teams);
 
+  /** @TODO when (and how?) to invalidate this query? */
+  const { data, isLoading, isError } = api.team.getAllTeamsByUser.useQuery();
+  // data && setTeamsList(data as Array<TeamType>);
+  const teamsList = useMemo(() => {
+    return data ? (data as Array<TeamType>) : teams;
+  }, [data]);
+
+  /** @TODO is it necessary to init with active team values? */
   const [formState, setFormState] = useState<FormValuesType | undefined>(
     activeTeam
-      ? (teams.find((t) => t.id === activeTeam) as FormValuesType | undefined)
+      ? (teamsList.find((t) => t.id === activeTeam) as
+          | FormValuesType
+          | undefined)
       : undefined,
   );
 
@@ -29,32 +41,58 @@ export default function TeamsContent({ teams }: { teams: Array<TeamType> }) {
   const handleShowForm = () => setShowForm(true);
   const handleHideForm = () => setShowForm(false);
 
+  const createMutation = api.team.createTeam.useMutation();
+  const updateMutation = api.team.updateTeam.useMutation();
+
   const handleCreate = (team: FormValuesType) => {
-    // if (!formState) return;
     const { name, league, settings } = team;
-    api.team.createTeam({
-      name,
-      league,
-      settings,
-    });
+    const newSettings = settings ? settings : {};
+    createMutation.mutate(
+      {
+        name,
+        league,
+        settings: newSettings,
+      },
+      {
+        onSuccess: (data) => {
+          setActiveTeam(data.id);
+          // setShowForm(false);
+        },
+        /** @TODO need real error handling here... */
+        onError: (error) => {
+          console.error("Error creating team:", error);
+        },
+      },
+    );
   };
 
   const handleEdit = (team: TeamType) => {
-    /** @TODO handle an error here? */
-    if (!activeTeam) return;
-    const { name, league, settings } = team;
-    // const { name, league } = info;
-    api.team.updateTeam({
-      id: activeTeam,
-      name,
-      league,
-      settings,
-    });
+    const { id, name, league, settings } = team;
+    updateMutation.mutate(
+      {
+        id,
+        name,
+        league,
+        settings,
+      },
+      {
+        onSuccess: (data) => {
+          setActiveTeam(data.id);
+          // setShowForm(false);
+        },
+        /** @TODO need real error handling here... */
+        onError: (error) => {
+          console.error("Error updating team:", error);
+        },
+      },
+    );
   };
 
   const handleSettingsChange = (settings: TeamSettingsType) => {
     if (activeTeam) {
-      const newTeam = teams.find((team) => team.id === activeTeam) as TeamType;
+      const newTeam = teamsList.find(
+        (team) => team.id === activeTeam,
+      ) as TeamType;
       handleEdit({ ...newTeam, settings });
     }
   };
@@ -69,14 +107,14 @@ export default function TeamsContent({ teams }: { teams: Array<TeamType> }) {
   };
 
   const team = useMemo(
-    () => teams.find((team) => team.id === activeTeam),
+    () => teamsList.find((team) => team.id === activeTeam),
     [activeTeam],
   );
 
   return (
     <>
       <TeamButtons
-        teams={teams}
+        teams={teamsList}
         activeTeam={activeTeam}
         handleClick={handleActiveTeam}
       />
@@ -94,7 +132,7 @@ export default function TeamsContent({ teams }: { teams: Array<TeamType> }) {
           setShowSettings={setShowSettings}
           handleFieldChange={handleFieldChange}
           handleSettingsChange={handleSettingsChange}
-          handleSubmit={handleCreate}
+          handleSubmit={() => formState && handleCreate(formState)}
         />
       )}
     </>

@@ -31,7 +31,7 @@ export default function DashboardLayout({
       <FlexContainer>
         <TitleLogo />
         <DashboardContainer>{children}</DashboardContainer>
-        <BackgroundLogo />
+        {/* <BackgroundLogo /> */}
       </FlexContainer>
     </>
   );

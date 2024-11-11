@@ -3,9 +3,12 @@
 import { PropsWithChildren, useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
 import { zoom } from "d3";
+import Link from "next/link";
+import { signIn } from "next-auth/react";
+// import { getServerAuthSession } from "~/server/auth";
+// import { useSession } from "next-auth/react";
 import { BgSvgBuilder } from "./SvgBuilder";
 import { SVG_DIMENSIONS } from "./dimensions";
-// import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 function MenuLink({
@@ -59,7 +62,25 @@ function Logo({ isOpen }: { isOpen: boolean }) {
 
 /** @TODO add Next auth login here, preferably with multiple options, not just Discord */
 function Login() {
-  return <div className="flex w-full items-center justify-center">Login</div>;
+  // const { data: session, status } = useSession();
+  // const session = await getServerAuthSession();
+  return (
+    // <div className="flex w-full items-center justify-center">Login</div>
+    <div className="flex flex-col items-center justify-center gap-4">
+      <p className="text-center text-2xl text-white">
+        {/* {session && <span>Logged in as {session.user?.name}</span>} */}
+      </p>
+      <Link
+        // href={session ? "/api/auth/signout" : "/api/auth/signin"}
+        href={"/api/auth/signin"}
+        className="rounded-full bg-white/10 px-10 py-3 font-semibold no-underline transition hover:bg-white/20"
+        onClick={() => signIn("discord")}
+      >
+        {/* {session ? "Sign out" : "Sign in"} */}
+        {"Sign in"}
+      </Link>
+    </div>
+  );
 }
 
 function Register() {

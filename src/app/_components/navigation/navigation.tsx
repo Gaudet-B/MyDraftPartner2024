@@ -5,6 +5,8 @@ import { Switch } from "@headlessui/react";
 
 import { useThemeAtom } from "../../dashboard/atoms";
 import { useAtom } from "jotai";
+import UserIcon from "../design-system/icons/UserIcon";
+import Link from "next/link";
 
 /** @TODO this... */
 // import burger from '../assets/burger-menu-vector.png'
@@ -18,7 +20,7 @@ function SwitchWrapper({
 }>) {
   return (
     <div
-      className="flex flex-row items-center justify-between"
+      className="flex h-6 w-10 flex-row items-center justify-between"
       onClick={(e) => handleChange(e)}
     >
       {children}
@@ -26,11 +28,12 @@ function SwitchWrapper({
   );
 }
 
+/** @TODO make these into SVGs... */
 function LightImg() {
   return (
     <img
       src={"https://cdn-icons-png.flaticon.com/512/1415/1415431.png"}
-      style={{ filter: "invert(100%)" }}
+      // style={{ filter: "invert(100%)" }}
       className={`ml-1`}
       height={16}
       width={16}
@@ -38,6 +41,7 @@ function LightImg() {
   );
 }
 
+/** @TODO this might not work... */
 function DarkImg() {
   return (
     <img
@@ -80,7 +84,7 @@ function ThemeToggle() {
       <Switch
         defaultChecked={enabled}
         // onChange={handleChange}
-        className={`relative z-10 inline-flex h-6 w-11 items-center justify-between rounded-full border border-gray-500 ${enabled ? "bg-black" : "bg-white"} hover:border-gray-800 focus:border-gray-800 focus:outline-none`}
+        className={`relative z-10 inline-flex h-6 w-11 items-center rounded-full border border-gray-500 ${enabled ? "bg-black" : "bg-white"} hover:border-gray-800 focus:border-gray-800 focus:outline-none`}
         style={{
           boxShadow: `rgb(${
             enabled ? "255 255 255 / 65%" : "0 0 0 / 25%"
@@ -96,6 +100,34 @@ function ThemeToggle() {
   );
 }
 
+function AccountDropdown() {
+  const [showMenu, setShowMenu] = useState(false);
+  const handleClick = () => setShowMenu(!showMenu);
+  return (
+    <div className="flex h-7 w-7 flex-col">
+      <div className="z-10 cursor-pointer" onClick={handleClick}>
+        <UserIcon isBaller />
+      </div>
+      <div
+        className={`absolute z-0 -translate-x-14 transition-all delay-75 duration-100 ${showMenu ? "opacity-1 translate-y-6" : "translate-y-0 opacity-0"}`}
+      >
+        {showMenu && (
+          <div className="rounded-lg bg-white p-2 shadow-lg">
+            <Link href="/account/settings" className="w-full">
+              Settings
+            </Link>
+            {/* <button className="w-full">Settings</button> */}
+            <Link href="/api/auth/logout" className="w-full">
+              Logout
+            </Link>
+            {/* <button className="w-full">Logout</button> */}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export function Navigation({
   expand,
   handleExpandMenu,
@@ -106,7 +138,7 @@ export function Navigation({
   darkMode?: boolean;
 }) {
   return (
-    <div className={`z-50 m-2 flex flex-row items-center justify-between p-2`}>
+    <div className={`m-2 flex flex-row items-center justify-between p-2`}>
       <button className={`z-20`}>
         <img
           src={
@@ -118,9 +150,13 @@ export function Navigation({
           width={40}
           style={!darkMode ? { filter: "invert(100%)" } : {}}
           onClick={() => handleExpandMenu(expand)}
+          className="z-50"
         />
       </button>
-      <ThemeToggle />
+      <div className="flex items-center gap-2">
+        <AccountDropdown />
+        <ThemeToggle />
+      </div>
     </div>
   );
 }

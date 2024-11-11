@@ -5,7 +5,7 @@ import FieldBackground from "./_components/background/FieldBackground";
 const BACKGROUND = "bg-[#4F8918]";
 
 export default async function Home() {
-  const players = await api.player.getAll();
+  // const players = await api.player.getAll();
 
   return (
     <HydrateClient>
