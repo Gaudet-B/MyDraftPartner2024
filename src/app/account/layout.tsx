@@ -5,10 +5,9 @@ export default function AccountLayout({
   children,
 }: Readonly<PropsWithChildren>) {
   return (
-    <>
+    <div className="w-ful flex min-h-screen flex-col">
       <Navigation />
-      {/** @TODO remove bg color from here and move to design-system */}
-      <div className="min-h-screen w-full bg-gray-100">{children}</div>
-    </>
+      {children}
+    </div>
   );
 }

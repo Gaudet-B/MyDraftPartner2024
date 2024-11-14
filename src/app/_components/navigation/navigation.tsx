@@ -1,13 +1,16 @@
 "use client";
 
 import { useState } from "react";
+import { useAtom } from "jotai";
+import Link from "next/link";
 import { Button as HeadlessBtn } from "@headlessui/react";
 import UserIcon from "../design-system/icons/UserIcon";
-import Link from "next/link";
 import HamburgerIcon from "../design-system/icons/HamburgerIcon";
 import ThemeToggle from "../design-system/button/ThemeToggle";
+import { useThemeAtom } from "~/app/dashboard/atoms";
+import transition from "@designsystem/class-names/transition";
 
-function AccountDropdown() {
+function AccountDropdown({ darkMode }: { darkMode: boolean }) {
   const [showMenu, setShowMenu] = useState(false);
   const handleClick = () => setShowMenu(!showMenu);
   return (
@@ -16,16 +19,18 @@ function AccountDropdown() {
         <UserIcon isBaller />
       </div>
       <div
-        className={`absolute z-0 -translate-x-12 transition-all delay-75 duration-100 ${showMenu ? "opacity-1 translate-y-6" : "translate-y-0 opacity-0"}`}
+        className={`absolute z-0 -translate-x-14 transition-all delay-75 duration-100 ${showMenu ? "opacity-1 translate-y-7" : "translate-y-0 opacity-0"}`}
       >
         {showMenu && (
-          <div className="rounded-lg bg-white p-2 shadow-lg">
-            <div className="flex flex-col gap-1">
-              <Link href="/account" className="w-full">
+          <div
+            className={`rounded-lg p-2 shadow-lg ${darkMode ? "bg-gray-900 text-gray-100 shadow-gray-900" : "bg-white text-black"}`}
+          >
+            <div className="flex flex-col gap-1 p-2">
+              <Link href="/account" className="flex w-full justify-end">
                 Settings
               </Link>
               {/* <button className="w-full">Settings</button> */}
-              <Link href="/api/auth/logout" className="w-full">
+              <Link href="/api/auth/logout" className="flex w-full justify-end">
                 Logout
               </Link>
               {/* <button className="w-full">Logout</button> */}
@@ -46,8 +51,11 @@ export function Navigation({
   handleExpandMenu?: (status: "expand" | "contract") => void;
   darkMode?: boolean;
 }) {
+  const [themeAtom] = useAtom(useThemeAtom);
   return (
-    <div className={`m-2 flex flex-row items-center justify-between p-2`}>
+    <div
+      className={`flex flex-row items-center justify-between p-4 shadow-lg ${transition.standard} ${themeAtom === "dark" ? "bg-gray-900" : "bg-white"}`}
+    >
       {handleExpandMenu && expand ? (
         <HeadlessBtn
           className={`z-50 flex w-14 items-center justify-center pr-3`}
@@ -71,7 +79,7 @@ export function Navigation({
         <div className="h-6 w-6 opacity-0" />
       )}
       <div className="flex items-center gap-2">
-        <AccountDropdown />
+        <AccountDropdown darkMode={themeAtom === "dark"} />
         <ThemeToggle />
       </div>
     </div>

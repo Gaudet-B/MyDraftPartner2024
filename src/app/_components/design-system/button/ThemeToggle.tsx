@@ -11,7 +11,7 @@ function SwitchWrapper({
 }>) {
   return (
     <div
-      className="flex h-6 w-10 flex-row items-center justify-between"
+      className="flex h-6 w-11 flex-row items-center justify-between"
       onClick={(e) => handleChange(e)}
     >
       {children}
@@ -24,7 +24,7 @@ function LightImg() {
   return (
     <img
       src={"https://cdn-icons-png.flaticon.com/512/1415/1415431.png"}
-      // style={{ filter: "invert(100%)" }}
+      style={{ filter: "invert(100%)" }}
       className={`ml-1`}
       height={16}
       width={16}

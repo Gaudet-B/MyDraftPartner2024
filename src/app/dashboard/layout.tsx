@@ -3,7 +3,11 @@ import { BackgroundLogo } from "./content";
 import { DashboardSidebar } from "./sidebar";
 
 function FlexContainer({ children }: PropsWithChildren) {
-  return <div className="flex flex-col items-center">{children}</div>;
+  return (
+    <div className="flex grow flex-col items-center pl-[75px] pt-3">
+      {children}
+    </div>
+  );
 }
 
 function TitleLogo() {
@@ -16,9 +20,7 @@ function TitleLogo() {
 function DashboardContainer({ children }: PropsWithChildren) {
   return (
     /** @TODO check these bracked custom classes... */
-    <div className="mt-[-50px] w-full pl-[75px]">
-      <div className="flex flex-row gap-5 p-5">{children}</div>
-    </div>
+    <div className="w-full grow">{children}</div>
   );
 }
 
@@ -26,13 +28,13 @@ export default function DashboardLayout({
   children,
 }: Readonly<PropsWithChildren>) {
   return (
-    <>
+    <div className="flex min-h-screen w-full flex-col">
       <DashboardSidebar />
       <FlexContainer>
         <TitleLogo />
         <DashboardContainer>{children}</DashboardContainer>
         {/* <BackgroundLogo /> */}
       </FlexContainer>
-    </>
+    </div>
   );
 }

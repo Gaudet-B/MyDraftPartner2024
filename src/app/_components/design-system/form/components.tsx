@@ -7,6 +7,7 @@ import {
   Label,
   Legend,
 } from "@headlessui/react";
+import Button, { ButtonTheme } from "@designsystem/button";
 
 export function FormContainer({ children }: PropsWithChildren) {
   return <div className="flex flex-col gap-5">{children}</div>;
@@ -44,7 +45,7 @@ export function FormGroup({
 }
 
 export function FormFieldset({ children }: PropsWithChildren) {
-  return <Fieldset className="flex flex-col gap-5">{children}</Fieldset>;
+  return <Fieldset className="flex flex-col gap-7">{children}</Fieldset>;
 }
 
 export function FormField({
@@ -60,6 +61,53 @@ export function FormField({
   );
 }
 
-export function FormLabel({ children }: PropsWithChildren) {
-  return <Label className="text-md font-semibold">{children}</Label>;
+export function FormLabel({
+  children,
+  light = false,
+  extraLight = false,
+}: PropsWithChildren<{ light?: boolean; extraLight?: boolean }>) {
+  const font = light
+    ? "font-light text-lg"
+    : extraLight
+      ? "font-extralight"
+      : "font-semibold";
+  return <Label className={font}>{children}</Label>;
+}
+
+export function FormSeparator() {
+  return (
+    <div className="flex w-full justify-center">
+      <hr className="w-4/5 border-gray-200" />
+    </div>
+  );
+}
+
+export function FormButton({
+  children,
+  theme = "submit",
+}: PropsWithChildren<{ theme?: ButtonTheme }>) {
+  return <Button theme={theme}>{children}</Button>;
+}
+
+export function FormSubmit({
+  text,
+  withCancel,
+  darkMode = false,
+}: {
+  text: string;
+  darkMode: boolean;
+  withCancel?: boolean;
+}) {
+  return (
+    <div className="flex w-full justify-end gap-2 p-1">
+      {withCancel && (
+        <FormButton theme={darkMode ? "cancel" : "cancel-light"}>
+          Cancel
+        </FormButton>
+      )}
+      <FormButton theme={darkMode ? "submit" : "submit-light"}>
+        {text}
+      </FormButton>
+    </div>
+  );
 }

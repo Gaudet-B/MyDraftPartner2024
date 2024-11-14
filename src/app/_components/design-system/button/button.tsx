@@ -35,12 +35,25 @@ const BUTTON_THEMES = {
   },
   submit: {
     light:
-      "text-white font-semibold border border-gray-300 bg-sky-900 hover:bg-sky-700",
-    dark: "text-white font-semibold border border-gray-300 bg-sky-900 hover:bg-sky-700",
+      "text-white font-semibold border border-gray-300 bg-sky-900 hover:bg-sky-700 px-2 py-2",
+    dark: "text-white font-semibold border border-gray-300 bg-sky-900 hover:bg-sky-700 px-2 py-2",
+  },
+  "submit-light": {
+    light: "text-white bg-sky-600 hover:bg-sky-700 px-3 py-2",
+    dark: "text-white bg-sky-600 hover:bg-sky-700 px-3 py-2",
   },
   "submit-secondary": {
     light: "text-white bg-sky-400 hover:bg-sky-500 px-3 py-2",
     dark: "text-white bg-sky-600 hover:bg-sky-500 px-3 py-2",
+  },
+  cancel: {
+    light:
+      "text-gray-100 bg-red-900 hover:bg-red-700 font-semibold border border-gray-300",
+    dark: "text-gray-100 bg-red-900 hover:bg-red-700 font-semibold border border-gray-300",
+  },
+  "cancel-light": {
+    light: "text-white bg-red-500 hover:bg-red-600 border border-gray-200",
+    dark: "text-white bg-red-500 hover:bg-red-600 border border-gray-200",
   },
   /** use 'transparent' when <Button> is a wrapper around child components */
   transparent: {
@@ -68,6 +81,8 @@ const BUTTON_THEMES = {
   //   dark: '',
   // },
 } as const;
+
+export type ButtonTheme = keyof typeof BUTTON_THEMES;
 
 /** @TODO use this as a wrapper around headless-ui Button */
 export default function Button({

@@ -1,11 +1,12 @@
 "use client";
 
 import { PropsWithChildren, useState } from "react";
-import { useThemeAtom } from "./atoms";
-import { Navigation } from "@components/navigation";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { useAtom } from "jotai";
+import { useThemeAtom } from "./atoms";
+import { Navigation } from "@components/navigation";
+import transition from "@designsystem/class-names/transition";
 
 /** @TODO ADD CONTENT HERE */
 const BUTTON_MAP = {
@@ -41,7 +42,7 @@ function Button({
 }>) {
   return (
     <button
-      className={`mt-1 flex flex-row gap-3 p-3 transition-all delay-75 duration-200 ease-in ${expand ? "w-full" : "w-[68px]"} items-center overflow-hidden rounded-lg border text-lg font-bold tracking-wider ${darkMode ? "bg-gray-800" : "bg-gray-200"} ${display && darkMode ? "bg-sky-900" : display ? "bg-sky-100" : ""} ${darkMode ? "border-gray-100" : "border-gray-700"} ${darkMode ? "hover:bg-sky-800" : "hover:bg-sky-100"}`}
+      className={`mt-1 flex flex-row gap-3 p-3 ${transition.standard} ${expand ? "w-full" : "w-[68px]"} items-center overflow-hidden rounded-lg border text-lg font-bold tracking-wider ${darkMode ? "bg-gray-800" : "bg-gray-200"} ${display && darkMode ? "bg-sky-900" : display ? "bg-sky-100" : ""} ${darkMode ? "border-gray-100" : "border-gray-700"} ${darkMode ? "hover:bg-sky-800" : "hover:bg-sky-100"}`}
     >
       {children}
     </button>
@@ -120,7 +121,7 @@ const SidebarContainer = ({
       /** @TODO what's up with 'expand' class??? */
       /** @TODO what's up with 'backgroundColor' class? */
       /** @TODO grab styles from 'dashboard-sidebar' class */
-      className={`absolute top-0 z-20 flex h-full min-h-screen flex-col items-stretch justify-start p-1 pt-[80px] transition-all delay-75 duration-200 ease-in ${expand === "expand" ? "w-[290px]" : "w-[76px]"} ${darkMode ? "bg-gray-600" : "bg-gray-300"} dashboard-sidebar`}
+      className={`absolute top-0 z-20 flex h-full min-h-screen flex-col items-stretch justify-start p-1 pt-[80px] ${transition.standard} ${expand === "expand" ? "w-[290px]" : "w-[76px]"} ${darkMode ? "bg-gray-600" : "bg-gray-300"} dashboard-sidebar`}
       style={{
         boxShadow: `${
           darkMode
