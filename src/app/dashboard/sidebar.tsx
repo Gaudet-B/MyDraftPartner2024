@@ -28,6 +28,7 @@ function ButtonContainer({
   );
 }
 
+/** @TODO change name of this component */
 function Button({
   children,
   expand,
@@ -40,7 +41,7 @@ function Button({
 }>) {
   return (
     <button
-      className={`mt-1 flex flex-row p-3 ${expand ? "gap-3" : ""} items-center rounded-lg border text-lg font-bold tracking-wider ${darkMode ? "bg-gray-800" : "bg-gray-200"} ${display && darkMode ? "bg-sky-900" : display ? "bg-sky-100" : ""} ${darkMode ? "border-gray-100" : "border-gray-700"} ${darkMode ? "hover:bg-sky-800" : "hover:bg-sky-100"}`}
+      className={`mt-1 flex flex-row gap-3 p-3 transition-all delay-75 duration-200 ease-in ${expand ? "w-full" : "w-[68px]"} items-center overflow-hidden rounded-lg border text-lg font-bold tracking-wider ${darkMode ? "bg-gray-800" : "bg-gray-200"} ${display && darkMode ? "bg-sky-900" : display ? "bg-sky-100" : ""} ${darkMode ? "border-gray-100" : "border-gray-700"} ${darkMode ? "hover:bg-sky-800" : "hover:bg-sky-100"}`}
     >
       {children}
     </button>
@@ -65,8 +66,15 @@ function ButtonImage({
   );
 }
 
-function ButtonText({ children }: PropsWithChildren) {
-  return <p className={`hover:underline`}>{children}</p>;
+function ButtonText({
+  children,
+  expand,
+}: PropsWithChildren<{ expand?: boolean }>) {
+  return (
+    <div className={`flex w-full justify-start overflow-hidden`}>
+      <span className={`hover:underline`}>{children}</span>
+    </div>
+  );
 }
 
 function SidebarButton({
@@ -92,7 +100,8 @@ function SidebarButton({
         expand={expand}
       >
         <ButtonImage button={text} darkMode={darkMode} />
-        <ButtonText>{show ? text : null}</ButtonText>
+        {/* <ButtonText>{show ? text : null}</ButtonText> */}
+        <ButtonText expand={expand}>{text}</ButtonText>
       </Button>
     </ButtonContainer>
   );
@@ -111,7 +120,7 @@ const SidebarContainer = ({
       /** @TODO what's up with 'expand' class??? */
       /** @TODO what's up with 'backgroundColor' class? */
       /** @TODO grab styles from 'dashboard-sidebar' class */
-      className={`absolute top-0 z-20 flex h-full min-h-screen flex-col items-stretch justify-start p-1 pt-[80px] ${darkMode ? "bg-gray-600" : "bg-gray-300"} ${expand} dashboard-sidebar`}
+      className={`absolute top-0 z-20 flex h-full min-h-screen flex-col items-stretch justify-start p-1 pt-[80px] transition-all delay-75 duration-200 ease-in ${expand === "expand" ? "w-[290px]" : "w-[76px]"} ${darkMode ? "bg-gray-600" : "bg-gray-300"} dashboard-sidebar`}
       style={{
         boxShadow: `${
           darkMode
@@ -126,7 +135,7 @@ const SidebarContainer = ({
 };
 
 export function DashboardSidebar() {
-  const [expand, setExpand] = useState<"expand" | "contract">("expand");
+  const [expand, setExpand] = useState<"expand" | "contract">("contract");
   const [show, setShow] = useState<boolean>(false);
 
   const [themeAtom] = useAtom(useThemeAtom);

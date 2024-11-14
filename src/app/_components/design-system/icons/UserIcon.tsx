@@ -1,5 +1,5 @@
-import { useAtom } from "jotai";
 import { PropsWithChildren } from "react";
+import { useAtom } from "jotai";
 import { useThemeAtom } from "~/app/dashboard/atoms";
 
 function SVG({ children }: PropsWithChildren) {

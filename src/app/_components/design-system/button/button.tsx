@@ -1,6 +1,7 @@
 "use client";
 
 import { PropsWithChildren } from "react";
+import { Button as HeadlessBtn } from "@headlessui/react";
 import { useAtom } from "jotai";
 import { useThemeAtom } from "~/app/dashboard/atoms";
 
@@ -68,6 +69,7 @@ const BUTTON_THEMES = {
   // },
 } as const;
 
+/** @TODO use this as a wrapper around headless-ui Button */
 export default function Button({
   children,
   hoverText,
@@ -96,12 +98,15 @@ export default function Button({
   };
 
   return (
-    <button
+    <HeadlessBtn
+      // <button
+      /** @TODO need all of these? specifically, 'cursor-pointer' and others that HeadlessBtn takes care of... */
       className={`cursor-pointer rounded-xl px-2 py-1 ${buttonClasses} ${underline ? "underline" : ""} ${bold ? "font-semibold" : ""} ${additionalClasses}`}
       disabled={disabled}
       onClick={(e) => handleClick(e)}
     >
       {children}
-    </button>
+      {/* </button> */}
+    </HeadlessBtn>
   );
 }
