@@ -86,7 +86,7 @@ function Helmet({ fill = "black" }: { fill?: "black" | "white" }) {
   );
 }
 
-export default function UserIcon({ isBaller = false }: { isBaller?: boolean }) {
+export function UserIcon({ isBaller = false }: { isBaller?: boolean }) {
   const [theme] = useAtom(useThemeAtom);
   const bg = theme === "light" ? "white" : "black";
   const color = theme === "light" ? "black" : "white";

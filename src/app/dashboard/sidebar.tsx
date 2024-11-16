@@ -3,17 +3,59 @@
 import { PropsWithChildren, useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { Button as HeadlessBtn } from "@headlessui/react";
 import { useAtom } from "jotai";
 import { useThemeAtom } from "./atoms";
-import { Navigation } from "@components/navigation";
+// import Navigation from "@components/navigation/navigation";
+import background from "@designsystem/colors/background";
+import border from "@designsystem/colors/border";
 import transition from "@designsystem/class-names/transition";
+import {
+  HamburgerIcon,
+  LineGoUpIcon,
+  RobotIcon,
+  SettingsIcon,
+  UsersIcon,
+} from "@designsystem/icons";
+import button from "../_components/design-system/colors/button";
+
+function ExpandMenuButton({
+  expand,
+  handleExpandMenu,
+  darkMode,
+}: {
+  expand: "expand" | "contract";
+  handleExpandMenu: (status: "expand" | "contract") => void;
+  darkMode: boolean;
+}) {
+  return (
+    <HeadlessBtn
+      className={`absolute z-50 flex w-16 -translate-y-14 items-center justify-center pl-1`}
+      onClick={() => handleExpandMenu(expand)}
+    >
+      {expand === "expand" ? (
+        <img
+          src={"https://cdn-icons-png.flaticon.com/512/2458/2458523.png"}
+          height={40}
+          width={40}
+          className={`${transition.standard}`}
+          style={darkMode ? { filter: "invert(100%)" } : {}}
+        />
+      ) : (
+        <div className="h-10 w-10">
+          <HamburgerIcon />
+        </div>
+      )}
+    </HeadlessBtn>
+  );
+}
 
 /** @TODO ADD CONTENT HERE */
 const BUTTON_MAP = {
-  RECOMMENDATIONS: "",
-  TEAMS: "",
-  ANALYSIS: "",
-  SETTINGS: "",
+  RECOMMENDATIONS: RobotIcon,
+  TEAMS: UsersIcon,
+  ANALYSIS: LineGoUpIcon,
+  SETTINGS: SettingsIcon,
 } as const;
 
 function ButtonContainer({
@@ -41,11 +83,11 @@ function Button({
   darkMode?: boolean;
 }>) {
   return (
-    <button
-      className={`mt-1 flex flex-row gap-3 p-3 ${transition.standard} ${expand ? "w-full" : "w-[68px]"} items-center overflow-hidden rounded-lg border text-lg font-bold tracking-wider ${darkMode ? "bg-gray-800" : "bg-gray-200"} ${display && darkMode ? "bg-sky-900" : display ? "bg-sky-100" : ""} ${darkMode ? "border-gray-100" : "border-gray-700"} ${darkMode ? "hover:bg-sky-800" : "hover:bg-sky-100"}`}
+    <div
+      className={`flex flex-row gap-3 p-3 ${transition.standard} ${expand ? "w-full" : "w-[66px]"} items-center overflow-hidden rounded-lg border text-lg font-bold tracking-wider ${darkMode ? background.darkTertiary : background.lightTertiary} ${display && darkMode ? button.dark : display ? button.light : ""} ${darkMode ? border.lightTertiary : border.darkTertiary} ${darkMode ? button.hover.dark : button.hover.light}`}
     >
       {children}
-    </button>
+    </div>
   );
 }
 
@@ -56,14 +98,17 @@ function ButtonImage({
   button: keyof typeof BUTTON_MAP;
   darkMode?: boolean;
 }) {
+  const SVGIcon = BUTTON_MAP[button];
   return (
-    <img
-      src={BUTTON_MAP[button]}
-      height={35}
-      width={35}
-      className={`mx-1`}
+    <div
+      // src={BUTTON_MAP[button]}
+      // height={35}
+      // width={35}
+      className={`h-10 w-10`}
       style={darkMode ? { filter: "invert(100%)" } : {}}
-    />
+    >
+      <SVGIcon dimensions={{ h: 40, w: 40 }} />
+    </div>
   );
 }
 
@@ -108,32 +153,39 @@ function SidebarButton({
   );
 }
 
-const SidebarContainer = ({
+function SidebarContainer({
   children,
   expand,
   darkMode = false,
 }: PropsWithChildren<{
   darkMode?: boolean;
   expand: "expand" | "contract";
-}>) => {
+}>) {
   return (
-    <div
-      /** @TODO what's up with 'expand' class??? */
-      /** @TODO what's up with 'backgroundColor' class? */
-      /** @TODO grab styles from 'dashboard-sidebar' class */
-      className={`absolute top-0 z-20 flex h-full min-h-screen flex-col items-stretch justify-start p-1 pt-[80px] ${transition.standard} ${expand === "expand" ? "w-[290px]" : "w-[76px]"} ${darkMode ? "bg-gray-600" : "bg-gray-300"} dashboard-sidebar`}
-      style={{
-        boxShadow: `${
-          darkMode
-            ? "3px 1px 5px rgba(0, 0, 0, 0.9)"
-            : "3px 1px 5px rgba(0, 0, 0, 0.3)"
-        }`,
-      }}
-    >
+    <div className="absolute z-20 h-full pt-[59px]">
+      <div
+        className={`flex h-full flex-col items-stretch justify-start gap-5 p-1 pt-2 ${transition.standard} ${expand === "expand" ? "w-[290px]" : "w-[76px]"} ${darkMode ? background.dark : background.light}`}
+        style={{
+          boxShadow: `${
+            darkMode
+              ? "3px 4px 5px rgba(0, 0, 0, 0.9)"
+              : "3px 4px 5px rgba(0, 0, 0, 0.3)"
+          }`,
+        }}
+      >
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function ButtonsContainer({ children }: PropsWithChildren<{}>) {
+  return (
+    <div className={`flex flex-col items-stretch justify-start gap-2`}>
       {children}
     </div>
   );
-};
+}
 
 export function DashboardSidebar() {
   const [expand, setExpand] = useState<"expand" | "contract">("contract");
@@ -153,22 +205,34 @@ export function DashboardSidebar() {
 
   return (
     <>
-      <Navigation
+      <SidebarContainer darkMode={darkMode} expand={expand}>
+        {expand ? (
+          <ExpandMenuButton
+            darkMode={darkMode}
+            expand={expand}
+            handleExpandMenu={handleExpandMenu}
+          />
+        ) : (
+          <div className="h-6 w-6 opacity-0" />
+        )}
+        {/* <Navigation
         expand={expand}
         handleExpandMenu={handleExpandMenu}
         darkMode={darkMode}
-      />
-      <SidebarContainer darkMode={darkMode} expand={expand}>
-        {buttons.map((button) => {
-          return (
-            <SidebarButton
-              darkMode={darkMode}
-              text={button}
-              expand={expand === "expand"}
-              show={show}
-            />
-          );
-        })}
+      /> */}
+        {/* <SidebarContainer darkMode={darkMode} expand={expand}> */}
+        <ButtonsContainer>
+          {buttons.map((button) => {
+            return (
+              <SidebarButton
+                darkMode={darkMode}
+                text={button}
+                expand={expand === "expand"}
+                show={show}
+              />
+            );
+          })}
+        </ButtonsContainer>
       </SidebarContainer>
     </>
   );

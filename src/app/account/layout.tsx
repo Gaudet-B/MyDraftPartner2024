@@ -1,5 +1,5 @@
 import { PropsWithChildren } from "react";
-import { Navigation } from "../_components/navigation";
+import Navigation from "@components/navigation/navigation";
 
 export default function AccountLayout({
   children,

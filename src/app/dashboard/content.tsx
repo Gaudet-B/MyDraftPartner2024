@@ -2,7 +2,9 @@
 
 import { useThemeAtom } from "./atoms";
 import { useAtom } from "jotai";
-import H1 from "@designsystem/typography/H1";
+// import H1 from "@designsystem/typography/H1";
+import background from "@designsystem/colors/background";
+import transition from "@designsystem/class-names/transition";
 
 /** @TODO import 'fieldIcon' */
 const fieldIcon = "";
@@ -30,6 +32,8 @@ export default function DashBoardContent({
 
   return (
     /** @TODO THIS IS A PLACEHOLDER AND NEEDS A NEW DESIGN - old one is just an array of enlarged buttons :(  */
-    <H1>Dashboard</H1>
+    <div
+      className={`h-full w-full grow ${transition.standard} ${themeAtom === "dark" ? background.darkSecondary : background.lightSecondary}`}
+    />
   );
 }

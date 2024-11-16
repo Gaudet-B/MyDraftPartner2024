@@ -1,6 +1,7 @@
 import { useAtom } from "jotai";
 import { PropsWithChildren } from "react";
 import { useThemeAtom } from "~/app/dashboard/atoms";
+import transition from "../class-names/transition";
 
 function SVG({ children }: PropsWithChildren) {
   return (
@@ -22,13 +23,13 @@ function Layer({
       <path
         d="M 10 0 H 100 Q 110 10 100,20 H 10 Q 0 10 10,0 Z"
         fill={fill}
-        className="shadow-lg"
+        className={`${transition.standard} shadow-lg`}
       />
     </g>
   );
 }
 
-export default function HamburgerIcon({ layers = 3 }: { layers?: number }) {
+export function HamburgerIcon({ layers = 3 }: { layers?: number }) {
   const [theme] = useAtom(useThemeAtom);
   const color = theme === "light" ? "black" : "white";
 
