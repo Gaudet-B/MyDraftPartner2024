@@ -1,140 +1,130 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useAtom } from "jotai";
 import { Team } from "@prisma/client";
-// import { api } from "~/utils/api";
-import { api } from "~/trpc/react";
+import { backgroundColors } from "@designsystem/colors";
+import transition from "@designsystem/class-names/transition";
 import { NewTeamButton, TeamButtons } from "./_components/TeamButtons";
-import { TeamSettings as TeamSettingsType } from "./_components/TeamInfo/info";
-import { FormValuesType } from "./_components/TeamForm/form";
 import TeamInfo from "./_components/TeamInfo";
-import TeamForm from "./_components/TeamForm";
+/** @TODO change to `NewTeamForm` ??? */
+import NewTeamForm, { FormValuesType } from "../../_components/forms/NewTeam";
+import { TeamSettings as TeamSettingsType } from "./_components/TeamInfo/info";
+import useTeamForm from "./hooks/useTeamForm";
+import { useThemeAtom } from "../atoms";
+import H1 from "~/app/_components/design-system/typography/H1";
+import { textColors } from "~/app/_components/design-system/colors/text";
 
 export type TeamType = {
   settings: TeamSettingsType;
 } & Team;
 
-export default function TeamsContent({ teams }: { teams: Array<TeamType> }) {
-  const [activeTeam, setActiveTeam] = useState<Team["id"]>();
-  const [showForm, setShowForm] = useState<boolean>(false);
-  const [showSettings, setShowSettings] = useState<boolean>(false);
-  // const [teamsList, setTeamsList] = useState<Array<TeamType>>(teams);
+const scrollbarStyles = {
+  scrollbarWidth: "thin",
+};
 
-  /** @TODO when (and how?) to invalidate this query? */
-  const { data, isLoading, isError } = api.team.getAllTeamsByUser.useQuery();
-  // data && setTeamsList(data as Array<TeamType>);
-  const teamsList = useMemo(() => {
-    return data ? (data as Array<TeamType>) : teams;
-  }, [data]);
-
-  /** @TODO is it necessary to init with active team values? */
-  const [formState, setFormState] = useState<FormValuesType | undefined>(
-    activeTeam
-      ? (teamsList.find((t) => t.id === activeTeam) as
-          | FormValuesType
-          | undefined)
-      : undefined,
-  );
-
-  const handleActiveTeam = (id: Team["id"]) => setActiveTeam(id);
-
-  const handleShowForm = () => setShowForm(true);
-  const handleHideForm = () => setShowForm(false);
-
-  const createMutation = api.team.createTeam.useMutation();
-  const updateMutation = api.team.updateTeam.useMutation();
-
-  const handleCreate = (team: FormValuesType) => {
-    const { name, league, settings } = team;
-    const newSettings = settings ? settings : {};
-    createMutation.mutate(
-      {
-        name,
-        league,
-        settings: newSettings,
-      },
-      {
-        onSuccess: (data) => {
-          setActiveTeam(data.id);
-          // setShowForm(false);
-        },
-        /** @TODO need real error handling here... */
-        onError: (error) => {
-          console.error("Error creating team:", error);
-        },
-      },
-    );
-  };
-
-  const handleEdit = (team: TeamType) => {
-    const { id, name, league, settings } = team;
-    updateMutation.mutate(
-      {
-        id,
-        name,
-        league,
-        settings,
-      },
-      {
-        onSuccess: (data) => {
-          setActiveTeam(data.id);
-          // setShowForm(false);
-        },
-        /** @TODO need real error handling here... */
-        onError: (error) => {
-          console.error("Error updating team:", error);
-        },
-      },
-    );
-  };
-
-  const handleSettingsChange = (settings: TeamSettingsType) => {
-    if (activeTeam) {
-      const newTeam = teamsList.find(
-        (team) => team.id === activeTeam,
-      ) as TeamType;
-      handleEdit({ ...newTeam, settings });
-    }
-  };
-
-  /** @TODO this needs work... maybe? */
-  const handleFieldChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    e?.preventDefault?.();
-    const newState = formState
-      ? { ...formState, [e.target.name]: e.target.value }
-      : ({} as FormValuesType);
-    setFormState({ ...formState, ...newState });
-  };
-
-  const team = useMemo(
-    () => teamsList.find((team) => team.id === activeTeam),
-    [activeTeam],
-  );
-
+function NewTeam({
+  newTeamFormState,
+  showNewTeamSettings,
+  handleCreate,
+  handleNewTeamSettingsChange,
+  handleNewTeamFieldChange,
+  handleShowSettings,
+  handleHideSettings,
+}: {
+  newTeamFormState?: FormValuesType;
+  showNewTeamSettings: boolean;
+  handleCreate: (team: FormValuesType) => void;
+  handleNewTeamSettingsChange: (settings: FormValuesType["settings"]) => void;
+  handleNewTeamFieldChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleShowSettings: () => void;
+  handleHideSettings: () => void;
+}) {
   return (
-    <>
-      <TeamButtons
-        teams={teamsList}
-        activeTeam={activeTeam}
-        handleClick={handleActiveTeam}
-      />
-      {team && <TeamInfo team={team} />}
-      <NewTeamButton
-        addTeam={showForm}
-        handleClick={showForm ? handleHideForm : handleShowForm}
-      />
-      {showForm && (
-        <TeamForm
-          /** @TODO keep this or remove??? */
-          isModal={false}
-          formValues={formState}
-          showSettings={showSettings}
-          setShowSettings={setShowSettings}
-          handleFieldChange={handleFieldChange}
-          handleSettingsChange={handleSettingsChange}
-          handleSubmit={() => formState && handleCreate(formState)}
-        />
-      )}
-    </>
+    <NewTeamForm
+      /** @TODO keep this `isModal` prop or remove??? */
+      isModal={false}
+      formValues={newTeamFormState}
+      showSettings={showNewTeamSettings}
+      handleShowSettings={handleShowSettings}
+      handleHideSettings={handleHideSettings}
+      handleFieldChange={handleNewTeamFieldChange}
+      handleSettingsChange={handleNewTeamSettingsChange}
+      handleSubmit={() => newTeamFormState && handleCreate(newTeamFormState)}
+    />
+  );
+}
+
+export default function TeamsContent() {
+  const [themeAtom] = useAtom(useThemeAtom);
+
+  const { display, edit, create } = useTeamForm();
+
+  const {
+    activeTeam,
+    showNewTeam,
+    handleActiveTeam,
+    handleShowNewTeam,
+    handleHideNewTeam,
+    teamsList,
+    team,
+  } = display;
+  const { teamInfoFormState, handleTeamInfoFieldChange, handleEdit } = edit;
+
+  const colorClasses =
+    themeAtom === "dark"
+      ? `${backgroundColors.darkAccent}`
+      : `${backgroundColors.lightAccent}`;
+
+  /** @TODO clean up all these divs and classes by abstracting to components with children */
+  return (
+    <div
+      className={`flex h-full w-full grow flex-col items-center ${transition.standard} ${themeAtom === "dark" ? backgroundColors.darkSecondary : backgroundColors.lightSecondary}`}
+    >
+      <div
+        className={`z-10 w-4/5 translate-y-8 rounded-3xl bg-opacity-80 px-[1px] py-3 shadow-lg ${transition.standard} ${colorClasses}`}
+        // style={{
+        //   scrollbarWidth: "thin",
+        //   scrollbarColor: "rgba(0, 0, 0, 0.5) rgba(0, 0, 0, 0.1)",
+        //   scrollbarGutter: "auto",
+        // }}
+      >
+        <div className="h-[80vh] overflow-auto">
+          <div
+            className={`w-full pt-5 text-center ${themeAtom === "dark" ? "text-gray-300" : "text-gray-700"}`}
+          >
+            {/** @TODO change font - just here or all H1s? */}
+            <H1>My Teams</H1>
+          </div>
+          <div className="flex w-full flex-col items-center p-4">
+            <div className="w-4/5">
+              <TeamButtons
+                teams={teamsList}
+                activeTeam={activeTeam}
+                handleClick={handleActiveTeam}
+              />
+            </div>
+            <div className="flex w-full justify-center py-2">
+              {team && (
+                <TeamInfo
+                  team={team}
+                  handleFieldChange={handleTeamInfoFieldChange}
+                  handleEdit={handleEdit}
+                  formState={teamInfoFormState}
+                />
+              )}
+            </div>
+            <div className="pt-4">
+              <NewTeamButton
+                addTeam={showNewTeam}
+                handleClick={
+                  showNewTeam ? handleHideNewTeam : handleShowNewTeam
+                }
+              />
+            </div>
+            {showNewTeam && <NewTeam {...{ ...create }} />}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

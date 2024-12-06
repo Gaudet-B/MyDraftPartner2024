@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, PropsWithChildren } from "react";
+import { PropsWithChildren } from "react";
 import Button from "@designsystem/button";
 
 function FormButtonContainer({
@@ -42,17 +42,20 @@ export function FormButton({
 export function SettingsButtonContainer({
   children,
   showSettings,
-  setShowSettings,
+  handleShowSettings,
+  handleHideSettings,
 }: PropsWithChildren<{
   showSettings: boolean;
-  setShowSettings: (value: boolean) => void;
+  handleShowSettings: () => void;
+  handleHideSettings: () => void;
+  // setShowSettings: (value: boolean) => void;
 }>) {
   return (
     <div
       className={`flex cursor-pointer flex-row items-center gap-3 pl-6 font-semibold drop-shadow-none ${
         showSettings ? "text-gray-800" : "text-white"
       }`}
-      onClick={() => setShowSettings(!showSettings)}
+      onClick={showSettings ? handleHideSettings : handleShowSettings}
       // style={{ textShadow: "none" }}
     >
       {children}
@@ -108,15 +111,19 @@ export function SettingsLabel({ showSettings }: { showSettings: boolean }) {
 
 export function SettingsButton({
   showSettings,
-  setShowSettings,
+  handleShowSettings,
+  handleHideSettings,
 }: {
   showSettings: boolean;
-  setShowSettings: (value: boolean) => void;
+  // setShowSettings: (value: boolean) => void;
+  handleShowSettings: () => void;
+  handleHideSettings: () => void;
 }) {
   return (
     <SettingsButtonContainer
       showSettings={showSettings}
-      setShowSettings={setShowSettings}
+      handleShowSettings={handleShowSettings}
+      handleHideSettings={handleHideSettings}
     >
       <SettingsButtonText
         showSettings={showSettings}

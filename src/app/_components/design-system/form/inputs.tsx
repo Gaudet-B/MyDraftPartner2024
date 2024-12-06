@@ -37,6 +37,7 @@ export function FormRadio({
 
 export function FormRadioGroup({
   darkMode,
+  htmlFor,
   items,
   value,
   handleChange,
@@ -44,6 +45,7 @@ export function FormRadioGroup({
   reverse = false,
 }: {
   darkMode: boolean;
+  htmlFor: string;
   items: Array<string | number>;
   value: string;
   handleChange: (v: string) => void;
@@ -60,11 +62,15 @@ export function FormRadioGroup({
           {reverse ? (
             <>
               <FormRadio value={item} darkMode={darkMode} />
-              <FormLabel extraLight={light}>{item}</FormLabel>
+              <FormLabel htmlFor={htmlFor} extraLight={light}>
+                {item}
+              </FormLabel>
             </>
           ) : (
             <>
-              <FormLabel extraLight={light}>{item}</FormLabel>
+              <FormLabel htmlFor={htmlFor} extraLight={light}>
+                {item}
+              </FormLabel>
               <FormRadio value={item} darkMode={darkMode} />
             </>
           )}

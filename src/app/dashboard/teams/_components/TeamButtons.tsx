@@ -5,7 +5,7 @@ import Button from "@designsystem/button";
 function ButtonsContainer({ children }: PropsWithChildren) {
   return (
     <div
-      className={`flex max-w-[90%] flex-row flex-wrap items-center justify-evenly gap-4 font-serif`}
+      className={`flex w-full flex-row flex-wrap items-center justify-evenly gap-4 px-4 py-2 font-serif`}
     >
       {children}
     </div>
@@ -63,21 +63,22 @@ export function TeamButtons({
   activeTeam,
   handleClick,
 }: {
-  teams: Array<Team>;
+  teams?: Array<Team>;
   activeTeam?: Team["id"];
   handleClick: (id: Team["id"]) => void;
 }) {
   return (
     <ButtonsContainer>
-      {teams.map((team, idx) => (
-        <TeamButton
-          idx={idx}
-          name={team.name}
-          teamId={team.id}
-          activeTeam={activeTeam}
-          handleClick={() => handleClick(team.id)}
-        />
-      ))}
+      {teams &&
+        teams.map((team, idx) => (
+          <TeamButton
+            idx={idx}
+            name={team.name}
+            teamId={team.id}
+            activeTeam={activeTeam}
+            handleClick={() => handleClick(team.id)}
+          />
+        ))}
     </ButtonsContainer>
   );
 }

@@ -1,4 +1,4 @@
-export default {
+export const backgroundColors = {
   dark: "bg-slate-950",
   darkSecondary: "bg-slate-900",
   darkTertiary: "bg-slate-800",
@@ -7,4 +7,14 @@ export default {
   lightSecondary: "bg-zinc-100",
   lightTertiary: "bg-zinc-200",
   lightAccent: "bg-zinc-300",
+  hover: {
+    dark: "hover:bg-slate-950",
+    darkSecondary: "hover:bg-slate-900",
+    darkTertiary: "hover:bg-slate-800",
+    darkAccent: "hover:bg-slate-700",
+    light: "hover:bg-zinc-50",
+    lightSecondary: "hover:bg-zinc-100",
+    lightTertiary: "hover:bg-zinc-200",
+    lightAccent: "hover:bg-zinc-300",
+  },
 } as const;

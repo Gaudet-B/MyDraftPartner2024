@@ -58,15 +58,16 @@ export function SVG({
       ref={svgRef}
       id={"MDP-field-image"}
       xmlns="http://www.w3.org/2000/svg"
-      width={width}
       // width={height * 0.68}
+      width={width}
       height={height}
+      transform={`translate(-${0}, -${0}) scale(${baseScale ?? 1})`}
       // transform={`scale(${baseScale})`}
-      transform={`translate(0, -600) scale(${baseScale ?? 0.6})`}
       // transform={`translate(${-100},${-700}) scale(0.6)`}
       // transform={`translate(${200},${500}) scale(4)`}
       // transform={transform(t)}
       className="transition-all duration-[1000ms] ease-out"
+      viewBox={`0 0 ${width} ${height}`}
     >
       {showSvg ? (
         children
@@ -83,11 +84,9 @@ export function SVG({
 
 export function FieldLines({
   children,
-  svgRef,
   x,
   y,
 }: PropsWithChildren<{
-  svgRef: React.RefObject<SVGGElement>;
   x: number;
   y: number;
 }>) {
@@ -97,16 +96,20 @@ export function FieldLines({
 export function EndZones({
   fieldWidth,
   sectionHeight,
+  hasColors = true,
+  hasBlackLines = false,
 }: {
   fieldWidth: number;
   sectionHeight: number;
+  hasColors?: boolean;
+  hasBlackLines?: boolean;
 }) {
   return (
-    <g stroke="white" strokeWidth={6}>
+    <g stroke={hasBlackLines ? "black" : "white"} strokeWidth={4}>
       {/* Top End Zone */}
       <path
         d={`M 0 0 H ${fieldWidth} V ${sectionHeight} H 0 Z`}
-        className="fill-sky-900"
+        className={hasColors ? "fill-sky-900" : "fill-none"}
         // fill="none"
         // opacity={0.6}
       />
@@ -115,7 +118,7 @@ export function EndZones({
       {/* Bottom End Zone */}
       <path
         d={`M 0 ${11 * sectionHeight} H ${fieldWidth} V ${12 * sectionHeight} H 0 Z`}
-        className="fill-red-900"
+        className={hasColors ? "fill-red-900" : "fill-none"}
         // fill="none"
         // opacity={0.6}
       />
@@ -130,9 +133,12 @@ export function EndZones({
   );
 }
 
-export function YardLines({ children }: PropsWithChildren) {
+export function YardLines({
+  children,
+  hasBlackLines = false,
+}: PropsWithChildren<{ hasBlackLines?: boolean }>) {
   return (
-    <g stroke="white" strokeWidth={3}>
+    <g stroke={hasBlackLines ? "black" : "white"} strokeWidth={2}>
       {children}
     </g>
   );
@@ -144,18 +150,21 @@ export function FieldSection({
   sectionHeight,
   start,
   i,
+  hasColors = true,
 }: PropsWithChildren<{
   fieldWidth: number;
   sectionHeight: number;
   start: number;
   i: number;
+  hasColors?: boolean;
 }>) {
+  const fill = i % 2 === 0 ? "#4F8918" : "#456F16";
   return (
     <g id={`field-section-${i}`} key={`field-section-${i}`}>
       {/* Section Background Color */}
       <path
         d={`M 0 ${start} H ${fieldWidth} V ${start + sectionHeight} H 0 Z`}
-        fill={i % 2 === 0 ? "#4F8918" : "#456F16"}
+        fill={hasColors ? fill : "none"}
         // fill="none"
         stroke="none"
       />
@@ -171,11 +180,13 @@ export function HashLines({
   hash,
   i,
   j,
+  // blackLines = false,
 }: {
   fieldWidth: number;
   hash: number;
   i: number;
   j: number;
+  // blackLines?: boolean;
 }) {
   const [is2Yd, s, e] = get2YdMarker(i, j, fieldWidth);
   return (
@@ -206,6 +217,7 @@ export function FieldNumbers({
   i,
   leftNum,
   rightNum,
+  blackNums = false,
 }: {
   fieldHeight: number;
   fieldWidth: number;
@@ -213,27 +225,28 @@ export function FieldNumbers({
   i: number;
   leftNum: number;
   rightNum: number;
+  blackNums?: boolean;
 }) {
   return (
     <g
       transform={`translate(0,${start})`}
       fontFamily="Bodoni Moda"
       fontStyle={"serif"}
-      fontSize={96}
-      fill="white"
-      stroke={"white"}
-      strokeWidth={2}
+      fontSize={32}
+      fill={blackNums ? "black" : "white"}
+      stroke={blackNums ? "black" : "white"}
+      strokeWidth={1}
     >
       <g transform="rotate(90)">
         {i !== 0 && (
-          <text x={0.002 * fieldHeight} y={-(0.079 * fieldWidth)}>
+          <text x={0.005 * fieldHeight} y={-(0.09 * fieldWidth)}>
             0
           </text>
         )}
         {i < 9 && (
           <text
-            x={leftNum === 1 ? 0.058 * fieldHeight : 0.058 * fieldHeight - 4}
-            y={-(0.0785 * fieldWidth)}
+            x={leftNum === 1 ? 0.058 * fieldHeight : 0.058 * fieldHeight - 3}
+            y={-(0.09 * fieldWidth)}
           >
             {leftNum}
           </text>
@@ -245,15 +258,15 @@ export function FieldNumbers({
             x={
               rightNum === 1
                 ? -(0.025 * fieldHeight)
-                : -(0.025 * fieldHeight) - 4
+                : -(0.025 * fieldHeight) - 3
             }
-            y={0.925 * fieldWidth}
+            y={0.915 * fieldWidth}
           >
             {rightNum}
           </text>
         )}
         {i < 9 && (
-          <text x={-(0.08 * fieldHeight)} y={0.925 * fieldWidth}>
+          <text x={-(0.078 * fieldHeight)} y={0.915 * fieldWidth}>
             0
           </text>
         )}
@@ -265,27 +278,37 @@ export function FieldNumbers({
 export function Sidelines({
   fieldWidth,
   fieldHeight,
+  blackLines = false,
 }: {
   fieldWidth: number;
   fieldHeight: number;
+  blackLines?: boolean;
 }) {
   return (
-    <g stroke="white" strokeWidth={6}>
+    <g stroke={blackLines ? "black" : "white"} strokeWidth={4}>
       <path d={`M 0 0 H ${fieldWidth} V ${fieldHeight} H 0 V 0`} fill="none" />
     </g>
   );
 }
 
-export function Midfield({ x, y }: { x: number; y: number }) {
+export function Midfield({
+  x,
+  y,
+  hasBlackLines = false,
+}: {
+  x: number;
+  y: number;
+  hasBlackLines?: boolean;
+}) {
   return (
     <g>
       <circle
         cx={x}
         cy={y}
-        r={70}
-        strokeWidth={4}
-        // className={"fill-[#374151] stroke-white"}
-        className={"fill-none stroke-white"}
+        r={30}
+        strokeWidth={2}
+        fill="none"
+        stroke={hasBlackLines ? "black" : "white"}
       />
     </g>
   );
@@ -309,24 +332,24 @@ function GoalPost({
   baseY: number;
 }) {
   return (
-    <g transform={`translate(${x},${y - 15})`}>
+    <g transform={`translate(${x},${y - 6})`}>
       <circle
         cx={baseX}
         cy={baseY}
-        r={20}
+        r={10}
         fill="gray"
-        strokeWidth={4}
+        strokeWidth={2}
         className={className}
       />
       <path d={path} fill="#CBC15D" />
-      {/* 10px */}
-      <path d={`M 0 0 H ${goalPostWidth} V 10 H 0 Z`} fill="#E9BE49" />
-      {/* 5px */}
-      <path d={`M 0 10 H ${goalPostWidth} V 15 H 0 Z`} fill="#FEEFAE" />
-      {/* 15px */}
-      <path d={`M 0 15 H ${goalPostWidth} V 30 H 0 Z`} fill="#F6B721" />
-      <circle cx={0} cy={14} r={20} fill="#CBC15D" />
-      <circle cx={goalPostWidth} cy={14} r={20} fill="#CBC15D" />
+      {/* 10px -> 4px */}
+      <path d={`M 0 0 H ${goalPostWidth} V 4 H 0 Z`} fill="#E9BE49" />
+      {/* 5px -> 2px */}
+      <path d={`M 0 4 H ${goalPostWidth} V 6 H 0 Z`} fill="#FEEFAE" />
+      {/* 15px -> 6px */}
+      <path d={`M 0 6 H ${goalPostWidth} V 12 H 0 Z`} fill="#F6B721" />
+      <circle cx={0} cy={6} r={8} fill="#CBC15D" />
+      <circle cx={goalPostWidth} cy={6} r={8} fill="#CBC15D" />
     </g>
   );
 }
@@ -350,10 +373,10 @@ export function GoalPosts({
         x={gpStart}
         y={y}
         baseX={baseX}
-        baseY={-30}
+        baseY={-16}
         goalPostWidth={goalPostWidth}
         // path={-30}
-        path={`M ${baseX - 10} ${-30} A 10 10 0 0 1 ${baseX + 10} ${-30} V 30 H ${baseX - 10} V ${-30} Z`}
+        path={`M ${baseX - 7} ${-15} A 7 7 0 0 1 ${baseX + 7} ${-15} V 12 H ${baseX - 7} V ${-15} Z`}
         className={"stroke-sky-800"}
       />
       {/** Bottom Goalposts */}
@@ -361,10 +384,10 @@ export function GoalPosts({
         x={gpStart}
         y={height - y}
         baseX={baseX}
-        baseY={64}
+        baseY={29}
         goalPostWidth={goalPostWidth}
         // path={60}
-        path={`M ${baseX - 10} ${60} V 0 H ${baseX + 10} V ${60} A 10 10 0 0 1 ${baseX - 10} ${60} Z`}
+        path={`M ${baseX - 7} ${28} V 0 H ${baseX + 7} V ${28} A 7 7 0 0 1 ${baseX - 7} ${28} Z`}
         className={"stroke-red-800"}
       />
     </g>

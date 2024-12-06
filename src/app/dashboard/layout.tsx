@@ -1,13 +1,7 @@
 import { PropsWithChildren } from "react";
-// import { BackgroundLogo } from "./content";
+import { BackgroundLogoContainer } from "./content";
 import { DashboardSidebar } from "./sidebar";
 import Navigation from "@components/navigation/navigation";
-
-function FlexContainer({ children }: PropsWithChildren) {
-  return (
-    <div className="flex grow flex-col items-center pl-[75px]">{children}</div>
-  );
-}
 
 function TitleLogo() {
   /** @TODO grab custom CSS from 'logo-title' class */
@@ -18,8 +12,9 @@ function TitleLogo() {
 
 function DashboardContainer({ children }: PropsWithChildren) {
   return (
-    /** @TODO check these bracked custom classes... */
-    <div className="flex w-full grow flex-col">{children}</div>
+    <div className="flex w-full grow flex-col items-center pl-[75px]">
+      {children}
+    </div>
   );
 }
 
@@ -30,11 +25,11 @@ export default function DashboardLayout({
     <div className="flex min-h-screen w-full flex-col">
       <Navigation />
       <DashboardSidebar />
-      <FlexContainer>
-        {/* <TitleLogo /> */}
-        <DashboardContainer>{children}</DashboardContainer>
-        {/* <BackgroundLogo /> */}
-      </FlexContainer>
+      {/* <FlexContainer> */}
+      {/* <TitleLogo /> */}
+      <DashboardContainer>{children}</DashboardContainer>
+      {/* </FlexContainer> */}
+      <BackgroundLogoContainer />
     </div>
   );
 }

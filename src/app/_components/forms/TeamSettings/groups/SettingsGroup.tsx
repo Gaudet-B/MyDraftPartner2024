@@ -9,7 +9,7 @@ function ValueContainer({
 }) {
   return (
     <div
-      className={`flex flex-row items-center justify-start pl-4 text-center text-base font-bold`}
+      className={`flex flex-row items-center justify-start text-center text-base font-bold`}
     >
       <div
         className={`flex flex-row items-center justify-center border-2 border-double ${

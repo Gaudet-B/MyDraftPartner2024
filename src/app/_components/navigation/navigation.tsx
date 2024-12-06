@@ -7,7 +7,7 @@ import { UserIcon } from "@designsystem/icons";
 import ThemeToggle from "@designsystem/button/ThemeToggle";
 import { useThemeAtom } from "~/app/dashboard/atoms";
 import transition from "@designsystem/class-names/transition";
-import background from "@designsystem/colors/background";
+import { backgroundColors } from "@designsystem/colors";
 
 function AccountDropdown({ darkMode }: { darkMode: boolean }) {
   const [showMenu, setShowMenu] = useState(false);
@@ -23,7 +23,7 @@ function AccountDropdown({ darkMode }: { darkMode: boolean }) {
       >
         {showMenu && (
           <div
-            className={`rounded-lg p-2 shadow-lg ${transition.standard} ${darkMode ? background.dark + " bg-gray-900 text-gray-100 shadow-gray-900" : background.light + " bg-white text-black"}`}
+            className={`rounded-lg p-2 shadow-lg ${transition.standard} ${darkMode ? backgroundColors.dark + " bg-gray-900 text-gray-100 shadow-gray-900" : backgroundColors.light + " bg-white text-black"}`}
           >
             <div className="flex flex-col gap-1 p-2">
               <Link href="/account" className="flex w-full justify-end">
@@ -46,7 +46,7 @@ export default function Navigation() {
   const [themeAtom] = useAtom(useThemeAtom);
   return (
     <div
-      className={`z-10 flex flex-row items-center justify-end p-4 shadow-md ${transition.standard} ${themeAtom === "dark" ? background.dark + " shadow-black" : background.light}`}
+      className={`z-10 flex flex-row items-center justify-end p-4 shadow-md ${transition.standard} ${themeAtom === "dark" ? backgroundColors.dark + " shadow-black" : backgroundColors.light}`}
     >
       <div className="flex items-center gap-2">
         <AccountDropdown darkMode={themeAtom === "dark"} />

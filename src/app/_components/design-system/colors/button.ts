@@ -1,3 +1,5 @@
+/** @TODO is this file necessary? should it be incorporated into button themes? should the themes be removed? */
+
 const hover = {
   dark: "hover:bg-sky-900",
   darkSecondary: "hover:bg-sky-800",
@@ -9,7 +11,7 @@ const hover = {
   lightAccent: "hover:bg-sky-400",
 } as const;
 
-export default {
+export const buttonColors = {
   dark: "bg-sky-900",
   darkSecondary: "bg-sky-800",
   darkTertiary: "bg-sky-700",

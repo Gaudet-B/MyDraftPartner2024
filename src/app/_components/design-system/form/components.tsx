@@ -63,15 +63,24 @@ export function FormField({
 
 export function FormLabel({
   children,
+  htmlFor,
   light = false,
   extraLight = false,
-}: PropsWithChildren<{ light?: boolean; extraLight?: boolean }>) {
+}: PropsWithChildren<{
+  htmlFor: string;
+  light?: boolean;
+  extraLight?: boolean;
+}>) {
   const font = light
     ? "font-light text-lg"
     : extraLight
       ? "font-extralight"
       : "font-semibold";
-  return <Label className={font}>{children}</Label>;
+  return (
+    <Label className={font} htmlFor={htmlFor}>
+      {children}
+    </Label>
+  );
 }
 
 export function FormSeparator() {

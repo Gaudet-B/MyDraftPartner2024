@@ -1,111 +1,111 @@
 import { Player } from "@prisma/client";
-import { Roster } from "./_components/TeamInfo/info";
+import {
+  Roster,
+  TeamSettings as TeamSettingsType,
+} from "./_components/TeamInfo";
+import { SettingsValuesType } from "./_components/TeamInfo/content";
 
-/** @TODO remove all instances of `any` */
-
-export const getPossibleDraftPositions = (numOfTeams: number): number[] => {
-  const positions = [];
+/** @TODO can this be moved to '@components/form/TeamSettings' ? */
+export function getPossibleDraftPositions(numOfTeams: number) {
+  const positions: Array<number> = [];
   for (let i = 1; i <= numOfTeams; i++) {
     positions.push(i);
   }
   return positions;
-};
+}
 
 export const parsePPR = {
-  toString: (value: boolean | number): string => {
+  toString: (value: boolean | number) => {
     if (value === false) return "NO";
     if (value === 0.5) return "0.5";
-    // if (value === 1) return '1.0'
     return "1.0";
-    // return ''
   },
-  fromString: (value: string): number | boolean => {
+  fromString: (value: string) => {
     if (value === "NO") return false;
     if (value === "0.5") return 0.5;
-    // if (value === '1.0') return 1
     return 1;
-    // return 0
   },
 };
 
 export const parseSuperflex = {
-  toString: (value: boolean): string => {
+  toString: (value: boolean) => {
     if (value === true) return "YES";
     return "NO";
   },
-  fromString: (value: string): boolean => {
+  fromString: (value: string) => {
     if (value === "YES") return true;
     return false;
   },
 };
 
+export function parseSettings(settings: TeamSettingsType): SettingsValuesType {
+  const { roster, numOfTeams, draftPosition, ppr, superflex } = settings;
+  return {
+    draftPosition,
+    numOfTeams,
+    possibleDraftPositions: getPossibleDraftPositions(numOfTeams),
+    ppr: parsePPR.toString(ppr),
+    superflex: parseSuperflex.toString(superflex),
+  };
+}
+
 export const checkForEmptyPositions = (
-  playerList: any[] | undefined,
-  rosterSettings: Roster | undefined,
-): string[] | undefined => {
-  if (!playerList || !rosterSettings) return undefined;
+  playerList: Array<Player>,
+  rosterSettings: Roster,
+) => {
+  // if (!playerList || !rosterSettings) return []
+
   const emptyPositions = [];
   for (const position of Object.keys(rosterSettings)) {
-    const positionToFind = position.toUpperCase();
-    if (!playerList.find((player) => player.playerPosition === positionToFind))
+    if (
+      !playerList.find((player) => player.position === position.toUpperCase())
+    )
       emptyPositions.push(position);
   }
-  // console.log(rosterSettings)
-  // console.log(emptyPositions)
-  // return emptyPositions.filter((position) => position !== 'flex')
   return emptyPositions;
 };
 
 export const parseStartersFromRoster = (
-  playerList?: Player[],
-  rosterSettings?: Roster,
-  emptyPositionList?: string[],
+  playerList: Array<Player>,
+  rosterSettings: Roster,
+  emptyPositionList: string[],
 ) => {
-  // console.log(rosterSettings)
-  // console.log(emptyPositionList)
-  if (!playerList || !rosterSettings || !emptyPositionList)
-    return { starters: undefined, bench: undefined };
-  let players = [...playerList];
-  const starters: { [key: string]: Array<Player | undefined> } = {};
-  // const playersToRemove: any[] = []
+  // if (!playerList || !rosterSettings || !emptyPositionList)
+  //   return { starters: undefined, bench: undefined }
+
+  const players = [...playerList];
+  const starters: { [key: string]: Array<Player> } = {};
   const positions = Object.keys(rosterSettings).filter(
     (key) => !emptyPositionList.includes(key),
   ) as Array<keyof Roster>;
+
   for (const position of positions) {
-    if (!rosterSettings[position]) continue;
-    // console.log(position)
-    // remove "empty" positions and add back in after
-    // if (emptyPositionList.includes(position)) continue
     starters[position] = [];
-    // console.log(`${position} ${rosterSettings[position].starters}`)
-    while (
-      (position !== "bench" &&
-        starters[position].length < rosterSettings[position].starters) ||
-      0
-    ) {
+    const p = rosterSettings[position];
+    const { starters: s } = p;
+    if (!p || !s) continue;
+
+    while (starters[position].length < s) {
       const positionToFind = position.toUpperCase();
-      const player = players.find(
-        (player) => player.position === positionToFind,
-      );
-      if (!player) continue;
-      const playerIndex = players.indexOf(player);
-      if (!starters[position].includes(player)) {
+      const player = players.find((p) => p.position === positionToFind);
+      const playerIndex = player ? players.indexOf(player) : -1;
+
+      if (player && !starters[position].includes(player)) {
         starters[position].push(player);
       }
       players.splice(playerIndex, 1);
-      // playersToRemove.push(player)
     }
   }
+
   for (const position of emptyPositionList) {
-    starters[position] = [undefined];
+    starters[position] = [];
   }
-  // const bench = players.filter((player) => !playersToRemove.includes(player))
+
   const bench = [...players];
-  starters["flex"] = [];
-  starters.flex.push(bench.shift());
-  // const flexStarter = bench.shift()
-  // starters.flex.push(flexStarter)
-  console.log(starters);
+  /** @TODO need a check here for non-flex players */
+  /** @TODO need to handle multiple flex spots? superflex? */
+  const flex = bench.shift() as Player;
+  starters["flex"] = [flex];
   return { starters, bench };
 };
 

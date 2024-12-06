@@ -9,16 +9,16 @@ export default async function Home() {
 
   return (
     <HydrateClient>
-      <div className={`${BACKGROUND}`}>
-        {/* <h1>MyDraft Partner 2024</h1>
+      {/* <div className={`${BACKGROUND}`}> */}
+      {/* <h1>MyDraft Partner 2024</h1>
         <p>2024 Fantasy Football draft hub</p> */}
-        {/* <ul>
+      {/* <ul>
           {players.map((player) => (
             <li key={player.id}>{player.name}</li>
           ))}
         </ul> */}
-        <FieldBackground />
-      </div>
+      <FieldBackground />
+      {/* </div> */}
     </HydrateClient>
   );
 }

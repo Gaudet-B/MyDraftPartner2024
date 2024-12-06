@@ -7,8 +7,11 @@ import { Button as HeadlessBtn } from "@headlessui/react";
 import { useAtom } from "jotai";
 import { useThemeAtom } from "./atoms";
 // import Navigation from "@components/navigation/navigation";
-import background from "@designsystem/colors/background";
-import border from "@designsystem/colors/border";
+import {
+  backgroundColors,
+  borderColors,
+  buttonColors,
+} from "@designsystem/colors";
 import transition from "@designsystem/class-names/transition";
 import {
   HamburgerIcon,
@@ -17,7 +20,6 @@ import {
   SettingsIcon,
   UsersIcon,
 } from "@designsystem/icons";
-import button from "../_components/design-system/colors/button";
 
 function ExpandMenuButton({
   expand,
@@ -84,7 +86,7 @@ function Button({
 }>) {
   return (
     <div
-      className={`flex flex-row gap-3 p-3 ${transition.standard} ${expand ? "w-full" : "w-[66px]"} items-center overflow-hidden rounded-lg border text-lg font-bold tracking-wider ${darkMode ? background.darkTertiary : background.lightTertiary} ${display && darkMode ? button.dark : display ? button.light : ""} ${darkMode ? border.lightTertiary : border.darkTertiary} ${darkMode ? button.hover.dark : button.hover.light}`}
+      className={`flex flex-row gap-3 p-3 ${transition.standard} ${expand ? "w-full" : "w-[66px]"} items-center overflow-hidden rounded-lg border text-lg font-bold tracking-wider ${darkMode ? backgroundColors.darkTertiary : backgroundColors.lightTertiary} ${display && darkMode ? buttonColors.dark : display ? buttonColors.light : ""} ${darkMode ? borderColors.lightTertiary : borderColors.darkTertiary} ${darkMode ? buttonColors.hover.dark : buttonColors.hover.light}`}
     >
       {children}
     </div>
@@ -164,7 +166,7 @@ function SidebarContainer({
   return (
     <div className="absolute z-20 h-full pt-[59px]">
       <div
-        className={`flex h-full flex-col items-stretch justify-start gap-5 p-1 pt-2 ${transition.standard} ${expand === "expand" ? "w-[290px]" : "w-[76px]"} ${darkMode ? background.dark : background.light}`}
+        className={`flex h-full flex-col items-stretch justify-start gap-5 p-1 pt-2 ${transition.standard} ${expand === "expand" ? "w-[290px]" : "w-[76px]"} ${darkMode ? backgroundColors.dark : backgroundColors.light}`}
         style={{
           boxShadow: `${
             darkMode

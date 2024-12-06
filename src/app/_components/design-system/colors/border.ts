@@ -1,4 +1,5 @@
-export default {
+export const borderColors = {
+  black: "border-black",
   dark: "border-slate-950",
   darkSecondary: "border-slate-900",
   darkTertiary: "border-slate-800",
@@ -7,4 +8,40 @@ export default {
   lightSecondary: "border-zinc-100",
   lightTertiary: "border-zinc-200",
   lightAccent: "border-zinc-300",
+  hover: {
+    dark: "hover:border-slate-950",
+    darkSecondary: "hover:border-slate-900",
+    darkTertiary: "hover:border-slate-800",
+    darkAccent: "hover:border-slate-700",
+    light: "hover:border-zinc-50",
+    lightSecondary: "hover:border-zinc-100",
+    lightTertiary: "hover:border-zinc-200",
+    lightAccent: "hover:border-zinc-300",
+  },
 } as const;
+// export const borderColors = {
+//   black: "border-black",
+//   white: "border-white",
+//   offBlack: "border-gray-900",
+//   dark: "border-sky-950",
+//   darkSecondary: "border-sky-900",
+//   darkTertiary: "border-sky-800",
+//   darkAccent: "border-sky-700",
+//   light: "border-zinc-50",
+//   lightSecondary: "border-zinc-100",
+//   lightTertiary: "border-zinc-200",
+//   lightAccent: "border-zinc-300",
+//   hover: {
+//     black: "hover:border-black",
+//     white: "hover:border-white",
+//     offBlack: "hover:border-gray-900",
+//     dark: "hover:border-sky-950",
+//     darkSecondary: "hover:border-sky-900",
+//     darkTertiary: "hover:border-sky-800",
+//     darkAccent: "hover:border-sky-700",
+//     light: "hover:border-zinc-50",
+//     lightSecondary: "hover:border-zinc-100",
+//     lightTertiary: "hover:border-zinc-200",
+//     lightAccent: "hover:border-zinc-300",
+//   },
+// } as const;

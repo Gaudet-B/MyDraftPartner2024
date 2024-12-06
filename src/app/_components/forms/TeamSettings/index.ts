@@ -1,1 +1,1 @@
-export * from "./TeamSettings";
+export * from "./TeamSettingsForm";

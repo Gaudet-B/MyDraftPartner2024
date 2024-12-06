@@ -1,12 +1,11 @@
 import {
   Roster as RosterType,
   TeamSettings as TeamSettingsType,
-} from "../TeamInfo/info";
+} from "../../../dashboard/teams/_components/TeamInfo/info";
 import { FormButton, SettingsButton, SettingsLabel } from "./content";
-import TeamSettings from "@components/forms/TeamSettings/TeamSettings";
+import TeamSettingsForm from "~/app/_components/forms/TeamSettings/TeamSettingsForm";
 import { FormContainer, FormLabel } from "@components/forms/form-components";
 import { FormInput } from "~/app/_components/forms/form-inputs";
-import { TeamType } from "../../content";
 
 export type FormValuesType = {
   name: string;
@@ -25,12 +24,13 @@ export type FormValuesType = {
   // };
 };
 
-export default function TeamForm({
+export default function NewTeamForm({
   formValues,
   handleFieldChange,
   handleSettingsChange,
   handleSubmit,
-  setShowSettings,
+  handleShowSettings,
+  handleHideSettings,
   isModal = false,
   showSettings = false,
 }: {
@@ -38,7 +38,9 @@ export default function TeamForm({
   handleFieldChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleSettingsChange: (settings: TeamSettingsType) => void;
   handleSubmit: () => void;
-  setShowSettings: (value: boolean) => void;
+  // setShowSettings: (value: boolean) => void;
+  handleShowSettings: () => void;
+  handleHideSettings: () => void;
   isModal: boolean;
   showSettings: boolean;
 }) {
@@ -64,10 +66,12 @@ export default function TeamForm({
         <SettingsLabel showSettings={showSettings} />
         <SettingsButton
           showSettings={showSettings}
-          setShowSettings={setShowSettings}
+          // setShowSettings={setShowSettings}
+          handleShowSettings={handleShowSettings}
+          handleHideSettings={handleHideSettings}
         />
         {showSettings && (
-          <TeamSettings
+          <TeamSettingsForm
             /** @TODO change this or keep it static? */
             editMode={true}
             teamSettings={formValues?.settings as TeamSettingsType}

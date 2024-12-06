@@ -1,7 +1,10 @@
 "use client";
 
-import { Dispatch, SetStateAction } from "react";
-import { RadioGroup as RG, Label, Radio } from "@headlessui/react";
+import {
+  RadioGroup as HeadlessRadioGroup,
+  Label,
+  Radio,
+} from "@headlessui/react";
 import { animated, useSpring } from "@react-spring/web";
 
 function RadioTab({
@@ -17,13 +20,16 @@ function RadioTab({
   index: number;
   lastIndex: number;
   key: string;
-  value: number;
+  value: number | string;
   name: string;
   form: string;
   selected: boolean;
-  onClick: (value: number) => void;
+  onClick: (value: number | string) => void;
 }) {
-  const handleClick = (e: React.MouseEvent<HTMLDivElement>, value: number) => {
+  const handleClick = (
+    e: React.MouseEvent<HTMLDivElement>,
+    value: number | string,
+  ) => {
     e.preventDefault();
     onClick(value);
   };
@@ -91,42 +97,51 @@ function RadioTab({
 
 export default function RadioGroup({
   selected,
-  setSelected,
+  // setSelected,
+  handleChange,
   handleClick,
   form,
   items,
+  htmlFor,
 }: {
   // these two are for the headlessui radio group
   selected: number | boolean | string;
-  setSelected: Dispatch<SetStateAction<any>>;
+  // setSelected: Dispatch<SetStateAction<any>>;
+  //
+  handleChange: (value: number | boolean | string) => void;
   // this one is for the form functionality
   handleClick: (value: number | boolean | string) => void;
   // this is for the screen reader label
   form: string;
   // this is the array of radio inputs
   items: string[] | number[];
+  // this is for the html label
+  htmlFor: string;
 }) {
   return (
     <div
-      className={`rounded-lg border border-gray-400 font-bold`}
-      style={{
-        textShadow: "none",
-        width: "fit-content",
-        height: `${form === "draft position" ? "36px" : "52px"}`,
-      }}
+      className={`h-[48px] w-fit rounded-lg border border-gray-400 font-bold`}
+      // style={{
+      //   textShadow: "none",
+      //   width: "fit-content",
+      //   height: `${form === "draft position" ? "36px" : "52px"}`,
+      // }}
     >
       <div
         className={`h-full rounded-lg border border-gray-400 font-bold`}
         style={{ textShadow: "none", width: "fit-content" }}
       >
-        <RG
+        <HeadlessRadioGroup
           value={selected}
-          onChange={setSelected}
-          className={`flex h-full flex-row gap-1 rounded-lg bg-gray-500`}
-          style={{ width: "fit-content", padding: "2px", gap: "3px" }}
+          onChange={handleChange}
+          className={`flex h-full flex-row gap-[3px] rounded-lg bg-gray-500 p-[2px]`}
+          // style={{ width: "fit-content", padding: "2px", gap: "3px" }}
         >
-          <Label className={"sr-only"}>{`${form} form`}</Label>
-          {items.map((item: any, idx: number) => {
+          <Label
+            className={"sr-only"}
+            htmlFor={htmlFor}
+          >{`${form} form`}</Label>
+          {items.map((item: string | number, idx: number) => {
             return (
               <RadioTab
                 key={`${form}-${item}`}
@@ -140,7 +155,7 @@ export default function RadioGroup({
               />
             );
           })}
-        </RG>
+        </HeadlessRadioGroup>
       </div>
     </div>
   );

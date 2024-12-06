@@ -1,4 +1,10 @@
-import { SVG_DIMENSIONS, TWO_YD_MARKER } from "../dimensions";
+import { useMemo } from "react";
+import {
+  Dimensions,
+  getDimensions,
+  SVG_DIMENSIONS,
+  TWO_YD_MARKER,
+} from "../dimensions";
 import {
   EndZones,
   FieldLines,
@@ -44,11 +50,21 @@ export function BgSvgBuilder({
   showSvg,
   svgRef,
   baseScale,
+  dimensions = SVG_DIMENSIONS,
+  hasGoalPosts = true,
+  hasEndZones = true,
+  hasColors = true,
+  hasBlackLines = false,
 }: {
   progressBar: boolean;
   showSvg: boolean;
-  svgRef: React.RefObject<Element>;
+  svgRef: React.RefObject<SVGElement>;
   baseScale?: number;
+  dimensions?: Dimensions;
+  hasGoalPosts?: boolean;
+  hasEndZones?: boolean;
+  hasColors?: boolean;
+  hasBlackLines?: boolean;
 }) {
   const {
     width,
@@ -58,7 +74,7 @@ export function BgSvgBuilder({
     fieldCords,
     sectionHeight,
     sectionCords,
-  } = SVG_DIMENSIONS;
+  } = dimensions;
 
   const { x1, y1 } = fieldCords;
 
@@ -78,16 +94,19 @@ export function BgSvgBuilder({
       <path d={`M 0 0 H ${width} V ${height} H 0 Z`} fill={BACKGROUND_COLOR} />
 
       {/* Lines */}
-      <FieldLines
-        svgRef={svgRef as React.RefObject<SVGSVGElement>}
-        x={x1}
-        y={y1}
-      >
+      <FieldLines x={x1} y={y1}>
         {/* End Zones */}
-        <EndZones fieldWidth={fieldWidth} sectionHeight={sectionHeight} />
+        {hasEndZones && (
+          <EndZones
+            fieldWidth={fieldWidth}
+            sectionHeight={sectionHeight}
+            hasColors={hasColors}
+            hasBlackLines={hasBlackLines}
+          />
+        )}
 
         {/* Yard Lines */}
-        <YardLines>
+        <YardLines hasBlackLines={hasBlackLines}>
           {sectionCords.map(([start, hashes], i) => {
             const leftNum = getYdNumber(i + 1);
             const rightNum = getYdNumber(i);
@@ -98,6 +117,7 @@ export function BgSvgBuilder({
                 sectionHeight={sectionHeight}
                 start={start}
                 i={i}
+                hasColors={hasColors}
               >
                 {/* Hash Lines */}
                 {hashes.map((hash, j) => (
@@ -112,6 +132,7 @@ export function BgSvgBuilder({
                   i={i}
                   leftNum={leftNum}
                   rightNum={rightNum}
+                  blackNums={hasBlackLines}
                 />
               </FieldSection>
             );
@@ -119,19 +140,29 @@ export function BgSvgBuilder({
         </YardLines>
 
         {/* Midfield */}
-        <Midfield y={fieldHeight / 2} x={fieldWidth / 2} />
+        <Midfield
+          y={fieldHeight / 2}
+          x={fieldWidth / 2}
+          hasBlackLines={hasBlackLines}
+        />
 
         {/* Sidelines */}
-        <Sidelines fieldWidth={fieldWidth} fieldHeight={fieldHeight} />
+        <Sidelines
+          fieldWidth={fieldWidth}
+          fieldHeight={fieldHeight}
+          blackLines={hasBlackLines}
+        />
       </FieldLines>
 
       {/* Goal Posts */}
-      <GoalPosts
-        goalPostWidth={goalPostWidth}
-        gpStart={gpStart}
-        height={height}
-        y={y1}
-      />
+      {hasGoalPosts && hasColors && (
+        <GoalPosts
+          goalPostWidth={goalPostWidth}
+          gpStart={gpStart}
+          height={height}
+          y={y1}
+        />
+      )}
     </SVG>
   );
 }
