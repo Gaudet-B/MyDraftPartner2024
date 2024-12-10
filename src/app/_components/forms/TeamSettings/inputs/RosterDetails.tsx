@@ -1,4 +1,5 @@
 import { Roster } from "~/app/dashboard/teams/_components/TeamInfo/info";
+import { ROSTER_OPTIONS } from "../const";
 
 function DetailControlButton({
   item,
@@ -45,7 +46,8 @@ export default function RosterDetails({
   editMode,
   handleNumberChange,
 }: {
-  items: Array<keyof Roster>;
+  // items: Array<keyof Roster>;
+  items: typeof ROSTER_OPTIONS;
   rosterDetails: Roster;
   editMode: boolean;
   handleNumberChange: (

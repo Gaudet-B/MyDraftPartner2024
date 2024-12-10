@@ -1,6 +1,6 @@
-export const NUM_OF_TEAMS = [8, 10, 12, 14, 16];
-export const PPR_OPTIONS = ["NO", "0.5", "1.0"];
-export const SUPERFLEX_OPTIONS = ["NO", "YES"];
+export const NUM_OF_TEAMS = [8, 10, 12, 14, 16] as const;
+export const PPR_OPTIONS = ["NO", "0.5", "1.0"] as const;
+export const SUPERFLEX_OPTIONS = ["NO", "YES"] as const;
 export const ROSTER_OPTIONS = [
   "qb",
   "rb",
@@ -10,4 +10,4 @@ export const ROSTER_OPTIONS = [
   "dst",
   "k",
   "bench",
-];
+] as const;

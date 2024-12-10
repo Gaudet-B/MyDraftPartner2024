@@ -1,6 +1,7 @@
 import { PropsWithChildren } from "react";
 import { Team } from "@prisma/client";
 import Button from "@designsystem/button";
+import { textColors } from "~/app/_components/design-system/colors/text";
 
 function ButtonsContainer({ children }: PropsWithChildren) {
   return (
@@ -22,24 +23,31 @@ function TextWithIcon({
   transform: React.CSSProperties;
 }) {
   return (
-    <div className={`flex justify-center`}>
-      <span>{`${text} (`}</span>
-      <div className={`flex justify-center`} style={transform}>
-        <span className={"h-[24px] w-[24px]"}>{icon}</span>
+    <div className={`flex w-[150px] items-baseline justify-between`}>
+      <div className="grow text-center">
+        <span>{`${text}`}</span>
       </div>
-      <span>{`)`}</span>
+      <div className="flex text-xl">
+        {/* <span>{`(`}</span> */}
+        <div className={`flex justify-center`} style={transform}>
+          <span className={icon === "+" ? "-translate-y-1" : ""}>{icon}</span>
+        </div>
+        {/* <span>{`)`}</span> */}
+      </div>
     </div>
   );
 }
 
 function TeamButton({
   activeTeam,
+  darkMode,
   idx,
   name,
   teamId,
   handleClick,
 }: {
   activeTeam?: Team["id"];
+  darkMode: boolean;
   idx: number;
   name: Team["name"];
   teamId: Team["id"];
@@ -50,9 +58,7 @@ function TeamButton({
       key={`team-${name}-${idx}-button`}
       onClick={handleClick}
       theme={activeTeam === teamId ? "action-lg" : "transparent-hover"}
-      additionalClasses={
-        activeTeam === teamId ? "scale-100 font-mono" : "scale-80 font-mono"
-      }
+      additionalClasses={`${darkMode ? textColors.lightTertiary : textColors.darkTertiary} ${activeTeam === teamId ? "scale-100 font-mono" : "scale-80 font-mono"}`}
       children={name}
     />
   );
@@ -60,12 +66,14 @@ function TeamButton({
 
 export function TeamButtons({
   teams,
+  darkMode,
   activeTeam,
   handleClick,
 }: {
   teams?: Array<Team>;
+  darkMode: boolean;
   activeTeam?: Team["id"];
-  handleClick: (id: Team["id"]) => void;
+  handleClick: (id: Team["id"] | undefined) => void;
 }) {
   return (
     <ButtonsContainer>
@@ -75,8 +83,11 @@ export function TeamButtons({
             idx={idx}
             name={team.name}
             teamId={team.id}
+            darkMode={darkMode}
             activeTeam={activeTeam}
-            handleClick={() => handleClick(team.id)}
+            handleClick={() =>
+              handleClick(activeTeam === team.id ? undefined : team.id)
+            }
           />
         ))}
     </ButtonsContainer>
@@ -91,7 +102,7 @@ export function NewTeamButton({
   handleClick: () => void;
 }) {
   return (
-    <Button onClick={handleClick} theme="transparent-hover">
+    <Button onClick={handleClick} theme="action">
       <TextWithIcon
         icon={addTeam ? "-" : "+"}
         text={addTeam ? "click to hide" : "create new team"}

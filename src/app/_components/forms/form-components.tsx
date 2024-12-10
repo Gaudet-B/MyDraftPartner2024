@@ -1,18 +1,7 @@
 import { PropsWithChildren } from "react";
 
 export function FormContainer({ children }: PropsWithChildren) {
-  return (
-    <div
-      className={`text-right`}
-      style={{
-        display: "grid",
-        gridTemplateColumns: "1fr 2fr",
-        gap: "20px",
-      }}
-    >
-      {children}
-    </div>
-  );
+  return <div className={`grid grid-cols-3 gap-5 text-right`}>{children}</div>;
 }
 
 export function FormLabel({
@@ -24,4 +13,8 @@ export function FormLabel({
       <span>{children}</span>
     </label>
   );
+}
+
+export function FormTitle({ children }: PropsWithChildren) {
+  return <span className={`text-xl`}>{children}</span>;
 }

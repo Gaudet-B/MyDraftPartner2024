@@ -9,15 +9,22 @@ import { NameAndLeague, Notes, Ranks, Settings } from "./content";
 import { TeamType } from "../../content";
 import { textColors } from "~/app/_components/design-system/colors/text";
 import { FormValuesType } from "~/app/_components/forms/NewTeam";
+import transition from "~/app/_components/design-system/class-names/transition";
+import {
+  ContentTab,
+  EditMode,
+  EditModeKeys,
+  INITIAL_EDIT_MODES,
+} from "../../hooks/useTeamForm";
 
 /** @TODO HOVER EFFECTS ON BUTTONS */
 
-const CONTENT_MAP = {
+export const CONTENT_MAP = {
   SETTINGS: Settings,
   RANKS: Ranks,
   NOTES: Notes,
   INFO: NameAndLeague,
-};
+} as const;
 
 const NOTEBOOK_TABS = [
   {
@@ -52,36 +59,26 @@ export type Roster = {
   [key in Position]: { starters?: number; max?: number };
 };
 
+/** @TODO make this type dynamic by passing in the number of teams as a param */
 export type TeamSettings = {
   roster?: Roster;
   numOfTeams: number;
   draftPosition: number;
-  ppr: boolean | number;
+  // ppr: number;
+  ppr: 0 | 0.5 | 1;
   superflex: boolean;
 };
 
 /** @TODO add a 'callback' prop to this type */
 export type ContentProps = {
   // activeTab: ContentTabs;
-  editMode: EditMode;
-  // editMode: { [key in EditModeKeys]: boolean };
   darkMode: boolean;
-  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  editMode: EditMode;
+  formState?: FormValuesType;
+  handleChange: (f: keyof FormValuesType, v: FormValuesType[typeof f]) => void;
   // setEditMode: (editMode: { [key in EditModeKeys]: boolean }) => void;
   team: TeamType;
 };
-
-export type ContentTab = keyof typeof CONTENT_MAP;
-export type EditModeKeys = ContentTab | "NEW_TEAM";
-
-export const INITIAL_EDIT_MODES: { [key in EditModeKeys]: boolean } = {
-  SETTINGS: false,
-  RANKS: false,
-  NOTES: false,
-  INFO: false,
-  NEW_TEAM: true,
-};
-export type EditMode = typeof INITIAL_EDIT_MODES;
 
 function OuterContainer({
   children,
@@ -120,6 +117,10 @@ function InfoContainer({
   );
 }
 
+function ContentContainer({ children }: PropsWithChildren) {
+  return <div className={`pt-4`}>{children}</div>;
+}
+
 function NotebookTabs({
   darkMode,
   activeTab,
@@ -138,14 +139,20 @@ function NotebookTabs({
     ? `${borderColors.darkAccent} ${backgroundColors.darkAccent} ${textColors.light} ${borderColors.hover.lightAccent}`
     : `${borderColors.lightAccent} ${backgroundColors.lightSecondary} ${textColors.dark} ${borderColors.hover.darkAccent}`;
 
+  const TEMP_NOTES_CLASSES = darkMode
+    ? `!cursor-not-allowed ${textColors.darkSecondary} ${borderColors.darkSecondary} ${backgroundColors.darkTertiary} ${textColors.hover.darkSecondary} ${borderColors.hover.darkSecondary} ${backgroundColors.hover.darkTertiary}`
+    : `!cursor-not-allowed ${textColors.lightMedium} ${borderColors.lightAccent} ${backgroundColors.lightTertiary} ${textColors.hover.lightMedium} ${borderColors.hover.lightAccent} ${backgroundColors.hover.lightTertiary}`;
+
   return (
     <div className={`pt-3 text-sm`}>
       <div className="flex min-w-[50px] max-w-[100px] flex-col items-stretch justify-start">
         {NOTEBOOK_TABS.map((tab, idx) => (
           <div
-            className={`flex w-full cursor-pointer items-center justify-center rounded-l-xl border-2 p-2 ${activeTab === tab.value ? activeClasses : colorClasses}`}
+            className={`flex w-full cursor-pointer items-center justify-center rounded-l-xl border-2 p-2 ${activeTab === tab.value ? activeClasses : tab.value === "NOTES" ? TEMP_NOTES_CLASSES : colorClasses}`}
             key={`team-tab-${idx}-${tab.value}`}
-            onClick={() => setActiveTab(tab.value)}
+            onClick={
+              tab.value === "NOTES" ? undefined : () => setActiveTab(tab.value)
+            }
           >
             <div className="flex flex-col">
               {tab.label.map((text) => (
@@ -196,35 +203,52 @@ function ActionButtons({
   );
 }
 
-/** @TODO add toggle handler here */
-function EditMode({
+function EditModeToggle({
   onClick,
-  buttonText = "edit",
+  text = "edit",
 }: {
   onClick: () => void;
-  buttonText: "done" | "edit";
+  text: "cancel" | "edit";
 }) {
   return (
     <div className={`flex justify-end pt-1`}>
-      <Button onClick={onClick}>{buttonText}</Button>
+      <Button
+        additionalClasses={transition.standard}
+        theme={text === "cancel" ? "cancel-light" : undefined}
+        onClick={onClick}
+      >
+        {text}
+      </Button>
+    </div>
+  );
+}
+
+function SaveChangesButton({ handleSave }: { handleSave: () => void }) {
+  return (
+    <div className={`flex justify-end pb-4 pt-1`}>
+      <Button theme="submit" bold onClick={handleSave}>
+        save changes
+      </Button>
     </div>
   );
 }
 
 function InfoContent({
-  editMode,
-  // editMode: editModeMap,
   darkMode,
+  // editMode: editModeMap,
+  editMode,
+  formState,
   handleChange,
   team,
-  setEditMode,
+  // setEditMode,
   activeTab = "INFO",
 }: {
-  editMode: { [key in EditModeKeys]: boolean };
   darkMode: boolean;
-  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  editMode: { [key in EditModeKeys]: boolean };
+  formState?: FormValuesType;
+  handleChange: (f: keyof FormValuesType, v: FormValuesType[typeof f]) => void;
   team: TeamType;
-  setEditMode: (editMode: { [key in EditModeKeys]: boolean }) => void;
+  // setEditMode: (editMode: { [key in EditModeKeys]: boolean }) => void;
   activeTab: ContentTab;
 }) {
   // const editMode = useMemo(
@@ -232,40 +256,58 @@ function InfoContent({
   //   [editModeMap, activeTab],
   // );
   const Content = useMemo(() => CONTENT_MAP[activeTab], [activeTab]);
-  const props: ContentProps = useMemo(() => {
+  const props = useMemo(() => {
     return {
       darkMode,
-      team,
       editMode,
+      formState,
+      team,
       handleChange,
-      setEditMode,
+      // setEditMode,
     };
   }, [darkMode, team, editMode, activeTab]);
   return <Content {...props} />;
 }
 
 export default function TeamInfo({
-  team,
+  activeTab,
   formState,
+  editMode,
+  team,
   handleEdit,
+  handleEditMode,
+  handleActiveTab,
   handleFieldChange,
 }: {
-  team: TeamType;
+  activeTab: ContentTab;
   formState?: FormValuesType;
-  handleEdit: (team: TeamType) => void;
-  handleFieldChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  editMode: EditMode;
+  team: TeamType;
+  handleEdit: (values: FormValuesType) => void;
+  handleEditMode: () => void;
+  handleActiveTab: (tab: ContentTab) => void;
+  handleFieldChange: (
+    f: keyof FormValuesType,
+    v: FormValuesType[typeof f],
+  ) => void;
 }) {
   const [theme] = useAtom(useThemeAtom);
   const darkMode = useMemo(() => theme === "dark", [theme]);
 
-  const [editMode, setEditMode] = useState(INITIAL_EDIT_MODES);
-  const [activeTab, setActiveTab] = useState<ContentTab>("INFO");
+  // const [editMode, setEditMode] = useState(INITIAL_EDIT_MODES);
+  // const [activeTab, setActiveTab] = useState<ContentTab>("INFO");
 
-  const handleEditMode = () => {
-    setEditMode((prev) => ({
-      ...prev,
-      [activeTab]: !prev[activeTab],
-    }));
+  // const handleEditMode = () => {
+  //   setEditMode((prev) => ({
+  //     ...prev,
+  //     [activeTab]: !prev[activeTab],
+  //   }));
+  // };
+
+  /** @TODO move this to `useTeamForm`? */
+  const handleFormSubmit = () => {
+    console.log("formState", formState);
+    formState && handleEdit(formState);
   };
 
   return (
@@ -283,7 +325,7 @@ export default function TeamInfo({
           <NotebookTabs
             darkMode={darkMode}
             activeTab={activeTab}
-            setActiveTab={setActiveTab}
+            setActiveTab={handleActiveTab}
           />
           {/** @NOTE this was called <RanksAndRoster /> */}
           <ActionButtons darkMode={darkMode} team={team} />
@@ -296,18 +338,24 @@ export default function TeamInfo({
               : `${borderColors.lightTertiary} ${backgroundColors.lightSecondary}`
           }
         >
-          <EditMode
-            buttonText={editMode[activeTab] ? "done" : "edit"}
+          <EditModeToggle
+            text={editMode[activeTab] ? "cancel" : "edit"}
             onClick={handleEditMode}
           />
-          <InfoContent
-            activeTab={activeTab}
-            editMode={editMode}
-            darkMode={darkMode}
-            handleChange={handleFieldChange}
-            setEditMode={setEditMode}
-            team={team}
-          />
+          <ContentContainer>
+            <InfoContent
+              activeTab={activeTab}
+              darkMode={darkMode}
+              editMode={editMode}
+              formState={formState}
+              handleChange={handleFieldChange}
+              // setEditMode={setEditMode}
+              team={team}
+            />
+          </ContentContainer>
+          {editMode[activeTab] && (
+            <SaveChangesButton handleSave={handleFormSubmit} />
+          )}
         </InfoContainer>
       </InnerContainer>
     </OuterContainer>

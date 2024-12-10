@@ -12,7 +12,7 @@ function TitleLogo() {
 
 function DashboardContainer({ children }: PropsWithChildren) {
   return (
-    <div className="flex w-full grow flex-col items-center pl-[75px]">
+    <div className="absolute flex h-screen w-full flex-col items-center overflow-hidden pl-[75px] pt-[60px]">
       {children}
     </div>
   );

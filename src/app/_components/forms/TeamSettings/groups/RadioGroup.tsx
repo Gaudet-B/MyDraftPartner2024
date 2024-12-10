@@ -6,6 +6,13 @@ import {
   Radio,
 } from "@headlessui/react";
 import { animated, useSpring } from "@react-spring/web";
+import { NUM_OF_TEAMS, PPR_OPTIONS, SUPERFLEX_OPTIONS } from "../const";
+
+export type RadioGroupItems =
+  | typeof NUM_OF_TEAMS
+  | typeof PPR_OPTIONS
+  | typeof SUPERFLEX_OPTIONS
+  | Array<number>;
 
 function RadioTab({
   index,
@@ -108,13 +115,14 @@ export default function RadioGroup({
   selected: number | boolean | string;
   // setSelected: Dispatch<SetStateAction<any>>;
   //
-  handleChange: (value: number | boolean | string) => void;
+  handleChange: (value: RadioGroupItems[number]) => void;
   // this one is for the form functionality
-  handleClick: (value: number | boolean | string) => void;
+  handleClick: (value: RadioGroupItems[number]) => void;
   // this is for the screen reader label
   form: string;
   // this is the array of radio inputs
-  items: string[] | number[];
+  // items: string[] | number[];
+  items: RadioGroupItems;
   // this is for the html label
   htmlFor: string;
 }) {
@@ -147,7 +155,7 @@ export default function RadioGroup({
                 key={`${form}-${item}`}
                 index={idx}
                 lastIndex={items.length - 1}
-                onClick={handleClick}
+                onClick={(v) => handleClick(v as RadioGroupItems[number])}
                 name={`${item}`}
                 form={form}
                 selected={selected === item || false}

@@ -1,4 +1,4 @@
-import { ContentProps } from "../info";
+import { ContentProps, Roster } from "../info";
 import TeamSettingsForm from "@components/forms/TeamSettings/TeamSettingsForm";
 
 export type SettingsValuesType = {
@@ -7,29 +7,27 @@ export type SettingsValuesType = {
   draftPosition: number;
   possibleDraftPositions: Array<number>;
   numOfTeams: number;
+  roster?: Roster;
 };
 
 export function Settings({
-  team,
-  // settings,
-  // activeTab,
+  // team,
+  // darkMode,
   editMode,
+  formState,
+  handleChange,
   // setEditMode,
-  // handleSettingsChange,
 }: ContentProps) {
-  // }: {
-  //   team: TeamType;
-  //   // settings: TeamSettingsType;
-  //   // activeTab: string;
-  //   editMode: EditMode;
-  //   // setEditMode?: (tab: keyof EditMode) => void;
-  //   // handleSettingsChange: (settings: any) => void;
-  // }) {
+  const handleSettingsChange = (settings: SettingsValuesType) =>
+    handleChange("settings", settings);
+
   return (
     <div className="pb-4">
       <TeamSettingsForm
         editMode={editMode.SETTINGS}
-        teamSettings={team.settings}
+        // teamSettings={team.settings}
+        teamSettings={formState?.settings}
+        handleSettingsChange={handleSettingsChange}
       />
     </div>
   );

@@ -68,7 +68,15 @@ export default function TeamsContent() {
     teamsList,
     team,
   } = display;
-  const { teamInfoFormState, handleTeamInfoFieldChange, handleEdit } = edit;
+  const {
+    teamInfoFormState,
+    activeTab,
+    editMode,
+    handleTeamInfoFieldChange,
+    handleEdit,
+    handleEditMode,
+    handleActiveTab,
+  } = edit;
 
   const colorClasses =
     themeAtom === "dark"
@@ -78,10 +86,10 @@ export default function TeamsContent() {
   /** @TODO clean up all these divs and classes by abstracting to components with children */
   return (
     <div
-      className={`flex h-full w-full grow flex-col items-center ${transition.standard} ${themeAtom === "dark" ? backgroundColors.darkSecondary : backgroundColors.lightSecondary}`}
+      className={`flex h-full w-full grow flex-col items-center p-6 ${transition.standard} ${themeAtom === "dark" ? backgroundColors.darkSecondary : backgroundColors.lightSecondary}`}
     >
       <div
-        className={`z-10 w-4/5 translate-y-8 rounded-3xl bg-opacity-80 px-[1px] py-3 shadow-lg ${transition.standard} ${colorClasses}`}
+        className={`z-10 w-full max-w-[900px] rounded-3xl bg-opacity-80 px-[1px] py-3 shadow-lg ${transition.standard} ${colorClasses}`}
         // style={{
         //   scrollbarWidth: "thin",
         //   scrollbarColor: "rgba(0, 0, 0, 0.5) rgba(0, 0, 0, 0.1)",
@@ -90,7 +98,7 @@ export default function TeamsContent() {
       >
         <div className="h-[80vh] overflow-auto">
           <div
-            className={`w-full pt-5 text-center ${themeAtom === "dark" ? "text-gray-300" : "text-gray-700"}`}
+            className={`font-aquire w-full pt-5 text-center ${themeAtom === "dark" ? "text-gray-300" : "text-gray-700"}`}
           >
             {/** @TODO change font - just here or all H1s? */}
             <H1>My Teams</H1>
@@ -101,27 +109,32 @@ export default function TeamsContent() {
                 teams={teamsList}
                 activeTeam={activeTeam}
                 handleClick={handleActiveTeam}
+                darkMode={themeAtom === "dark"}
               />
             </div>
             <div className="flex w-full justify-center py-2">
               {team && (
                 <TeamInfo
                   team={team}
+                  activeTab={activeTab}
+                  editMode={editMode}
                   handleFieldChange={handleTeamInfoFieldChange}
                   handleEdit={handleEdit}
+                  handleEditMode={handleEditMode}
+                  handleActiveTab={handleActiveTab}
                   formState={teamInfoFormState}
                 />
               )}
             </div>
-            <div className="pt-4">
+            <div className="flex flex-col items-center gap-5 pt-4">
               <NewTeamButton
                 addTeam={showNewTeam}
                 handleClick={
                   showNewTeam ? handleHideNewTeam : handleShowNewTeam
                 }
               />
+              {showNewTeam && <NewTeam {...{ ...create }} />}
             </div>
-            {showNewTeam && <NewTeam {...{ ...create }} />}
           </div>
         </div>
       </div>

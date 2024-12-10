@@ -12,11 +12,15 @@ function InfoGrid({ children }: PropsWithChildren) {
   return <div className="grid grid-cols-3 gap-2">{children}</div>;
 }
 
-/** @TODO replace this with designsys component? at least with HeadlessUI component... */
-function Label({ for: htmlFor, children }: PropsWithChildren<{ for: string }>) {
+/** @TODO replace this with designsystem component? at least with HeadlessUI component... */
+function Label({
+  for: htmlFor,
+  children,
+  darkMode,
+}: PropsWithChildren<{ for: string; darkMode: boolean }>) {
   return (
     <label
-      className={`flex h-8 w-full items-center justify-end text-right font-mono font-semibold ${textColors.darkSecondary}`}
+      className={`flex h-8 w-full items-center justify-end text-right font-mono font-semibold ${darkMode ? textColors.lightAccent : textColors.darkSecondary}`}
       htmlFor={htmlFor}
     >
       <span>{children}</span>
@@ -34,20 +38,27 @@ function Value({
   editMode?: boolean;
   darkMode: boolean;
   for: "name" | "league";
-  handleChange: ContentProps["handleChange"];
+  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   team: Team;
 }) {
   return (
     <div className="col-span-2 flex h-8 items-center">
       {editMode ? (
         <input
-          className={`h-8 rounded-lg px-2 font-mono font-normal ${darkMode ? `${backgroundColors.darkTertiary} ${textColors.lightSecondary}` : `bg-white ${textColors.black}`}`}
+          className={`h-8 rounded-lg px-2 font-mono font-normal ${darkMode ? `${backgroundColors.darkTertiary} ${textColors.light}` : `bg-white ${textColors.black}`}`}
           onChange={handleChange}
           type="text"
-          value={team[htmlFor]}
+          // value={team[htmlFor]}
+          // value={values[htmlFor]}
+          // defaultValue={values[htmlFor]}
+          defaultValue={team[htmlFor]}
         />
       ) : (
-        <span className={`ml-2 w-full`}>{team[htmlFor]}</span>
+        <span
+          className={`ml-2 w-full ${darkMode ? textColors.light : textColors.black}`}
+        >
+          {team[htmlFor]}
+        </span>
       )}
     </div>
   );
@@ -93,31 +104,43 @@ function TeamSummary({ settings }: { settings: TeamSettings }) {
   );
 }
 
-export function NameAndLeague({
-  handleChange,
-  team,
-  editMode,
-  // editMode = false,
-}: ContentProps) {
+export function NameAndLeague({ handleChange, team, editMode }: ContentProps) {
   const [themeAtom] = useAtom(useThemeAtom);
+
+  const handleNameAndLeagueChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    f: "name" | "league",
+    v: string,
+  ) => {
+    e.preventDefault();
+    handleChange(f, v);
+  };
 
   return (
     <InfoGrid>
-      <Label for={"name"}>{"Team"}</Label>
+      <Label darkMode={themeAtom === "dark"} for={"name"}>
+        {"Team"}
+      </Label>
       <Value
         for={"name"}
         team={team}
         darkMode={themeAtom === "dark"}
         editMode={editMode.INFO}
-        handleChange={handleChange}
+        handleChange={(e) =>
+          handleNameAndLeagueChange(e, "name", e.target.value)
+        }
       />
-      <Label for={"league"}>{"League"}</Label>
+      <Label darkMode={themeAtom === "dark"} for={"league"}>
+        {"League"}
+      </Label>
       <Value
         for={"league"}
         team={team}
         darkMode={themeAtom === "dark"}
         editMode={editMode.INFO}
-        handleChange={handleChange}
+        handleChange={(e) =>
+          handleNameAndLeagueChange(e, "league", e.target.value)
+        }
       />
       {!editMode && team.settings && (
         <TeamSummary settings={team.settings as TeamSettings} />

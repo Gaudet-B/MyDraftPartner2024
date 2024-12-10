@@ -5,6 +5,14 @@ import {
 } from "./_components/TeamInfo";
 import { SettingsValuesType } from "./_components/TeamInfo/content";
 
+// const DEFAULT_TEAM_SETTINGS = {
+//   draftPosition: 1,
+//   numOfTeams: 10,
+//   possibleDraftPositions: getPossibleDraftPositions(10),
+//   ppr: "1.0",
+//   superflex: "NO",
+// }
+
 /** @TODO can this be moved to '@components/form/TeamSettings' ? */
 export function getPossibleDraftPositions(numOfTeams: number) {
   const positions: Array<number> = [];
@@ -15,39 +23,50 @@ export function getPossibleDraftPositions(numOfTeams: number) {
 }
 
 export const parsePPR = {
-  toString: (value: boolean | number) => {
-    if (value === false) return "NO";
+  toString: (value: TeamSettingsType["ppr"]) => {
+    if (value === 0) return "NO";
     if (value === 0.5) return "0.5";
     return "1.0";
   },
-  fromString: (value: string) => {
-    if (value === "NO") return false;
+  fromString: (value: SettingsValuesType["ppr"]) => {
+    if (value === "NO") return 0;
     if (value === "0.5") return 0.5;
     return 1;
   },
 };
 
 export const parseSuperflex = {
-  toString: (value: boolean) => {
+  toString: (value: TeamSettingsType["superflex"]) => {
     if (value === true) return "YES";
     return "NO";
   },
-  fromString: (value: string) => {
+  fromString: (value: SettingsValuesType["superflex"]) => {
     if (value === "YES") return true;
     return false;
   },
 };
 
-export function parseSettings(settings: TeamSettingsType): SettingsValuesType {
-  const { roster, numOfTeams, draftPosition, ppr, superflex } = settings;
-  return {
-    draftPosition,
-    numOfTeams,
-    possibleDraftPositions: getPossibleDraftPositions(numOfTeams),
-    ppr: parsePPR.toString(ppr),
-    superflex: parseSuperflex.toString(superflex),
-  };
-}
+export const parseSettings = {
+  toFormValues: (settings: TeamSettingsType): SettingsValuesType => {
+    const { numOfTeams, draftPosition, ppr, superflex } = settings;
+    return {
+      draftPosition,
+      numOfTeams,
+      possibleDraftPositions: getPossibleDraftPositions(numOfTeams),
+      ppr: parsePPR.toString(ppr),
+      superflex: parseSuperflex.toString(superflex),
+    };
+  },
+  fromFormValues: (values: SettingsValuesType): TeamSettingsType => {
+    const { draftPosition, numOfTeams, ppr, superflex } = values;
+    return {
+      draftPosition,
+      numOfTeams,
+      ppr: parsePPR.fromString(ppr),
+      superflex: parseSuperflex.fromString(superflex),
+    };
+  },
+};
 
 export const checkForEmptyPositions = (
   playerList: Array<Player>,

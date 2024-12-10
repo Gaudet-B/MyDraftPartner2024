@@ -7,8 +7,6 @@ import {
 } from "~/server/api/trpc";
 
 export const teamRouter = createTRPCRouter({
-  /** @TODO revert back to protectedProcedure */
-  // getAllTeamsByUser: publicProcedure.query(async ({ ctx }) => {
   getAllTeamsByUser: protectedProcedure.query(async ({ ctx }) => {
     const teams = await ctx.db.team.findMany({
       where: { userId: ctx.session?.user.id },
@@ -16,9 +14,7 @@ export const teamRouter = createTRPCRouter({
     console.log("user", ctx.session?.user.id);
     return teams;
   }),
-  /** @TODO revert back to protectedProcedure */
   getOne: protectedProcedure
-    // getOne: publicProcedure
     .input(z.object({ id: z.number() }))
     .query(async ({ ctx, input }) => {
       return ctx.db.team.findUnique({
@@ -27,9 +23,7 @@ export const teamRouter = createTRPCRouter({
         },
       });
     }),
-  /** @TODO revert back to protectedProcedure */
   createTeam: protectedProcedure
-    // createTeam: publicProcedure
     .input(
       z.object({
         name: z.string(),
@@ -52,14 +46,17 @@ export const teamRouter = createTRPCRouter({
         },
       });
     }),
-  /** @TODO revert back to protectedProcedure */
   updateTeam: protectedProcedure
-    // updateTeam: publicProcedure
     .input(
       z.object({
         id: z.number(),
         name: z.string(),
-        settings: z.object({}),
+        settings: z.object({
+          draftPosition: z.number(),
+          numOfTeams: z.number(),
+          ppr: z.number(),
+          superflex: z.boolean(),
+        }),
         league: z.string(),
       }),
     )

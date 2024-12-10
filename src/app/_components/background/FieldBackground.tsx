@@ -35,20 +35,20 @@ function Logo({ isOpen }: { isOpen: boolean }) {
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        width="330"
+        width="350"
         height="110"
-        viewBox="0 0 330 110"
+        viewBox="0 0 350 110"
       >
         {/* <g className="stroke-[#00FFCC]"> */}
         <g
           /** @TODO change font (or draw as <path> elements like below) */
-          // fontFamily={"Bodoni Moda"}
+          // fontFamily={"Aquire"}
           // fontStyle={"serif"}
           fontSize={96}
           // fill="white"
           // stroke={"#00FFCC"}
           strokeWidth={2}
-          className="stroke-[#00ffea]"
+          className="font-aquire stroke-[#00ffea]"
         >
           {/* <path d="M10,70 L10,10 L30,10 L30,60 L50,60 L50,10 L70,10 L70,70 Z" />
         <path d="M80,70 L80,10 L100,10 L120,40 L100,70 Z" />
@@ -56,7 +56,13 @@ function Logo({ isOpen }: { isOpen: boolean }) {
         <path d="M190,70 L190,10 L230,10 L230,70 L210,70 L210,50 L210,30 L210,70 Z" />
         <path d="M240,70 L240,10 L260,10 L260,50 L280,50 L280,70 Z" /> */}
           <text x={0} y={80}>
-            MDP24
+            MDP
+          </text>
+          <text x={205} y={80}>
+            '
+          </text>
+          <text x={228} y={80} fontSize={92} className="font-sans">
+            24
           </text>
         </g>
       </svg>

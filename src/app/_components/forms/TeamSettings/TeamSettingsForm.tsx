@@ -9,11 +9,9 @@ import {
 } from "~/app/dashboard/teams/_components/TeamInfo/info";
 import {
   getPossibleDraftPositions,
-  parsePPR,
   // parsePPR,
-  // parseSuperflex,
   parseSettings,
-  parseSuperflex,
+  // parseSuperflex,
 } from "~/app/dashboard/teams/util";
 import { SettingsValuesType } from "~/app/dashboard/teams/_components/TeamInfo/content";
 import { SettingsInputs } from "./inputs/SettingsInputs";
@@ -24,75 +22,36 @@ export default function TeamSettingsForm({
   handleSettingsChange,
 }: {
   editMode: boolean;
-  teamSettings: TeamSettingsType;
-  handleSettingsChange?: (settings: TeamSettingsType) => void;
+  teamSettings?: SettingsValuesType;
+  handleSettingsChange: (settings: SettingsValuesType) => void;
 }) {
-  const [values, setValues] = useState<SettingsValuesType>(
-    parseSettings(teamSettings),
-  );
+  // const [values, setValues] = useState<SettingsValuesType>(
+  //   parseSettings.toFormValues(teamSettings),
+  // );
 
   const [themeAtom] = useAtom(useThemeAtom);
 
-  // const [numberOfTeams, setNumberOfTeams] = useState<number>(
-  //   teamSettings.numOfTeams,
-  // );
-
-  // const [ppr, setPpr] = useState<string>(parsePPR.toString(teamSettings.ppr));
-
-  // const [superflex, setSuperflex] = useState<string>(
-  //   parseSuperflex.toString(teamSettings.superflex),
-  // );
-
-  // const [draftPosition, setDraftPosition] = useState<number>(
-  //   teamSettings.draftPosition,
-  // );
-
-  // const [possibleDraftPositions, setPossibleDraftPositions] = useState<
-  //   number[]
-  // >(getPossibleDraftPositions(teamSettings.numOfTeams));
-
-  // const handleChange = (settings: TeamSettingsType) =>
-  //   handleSettingsChange(settings);
-
   const handleRadioChange = (
-    field: keyof TeamSettingsType,
-    value: number | boolean | string,
+    field: keyof SettingsValuesType,
+    // value: number | boolean,
+    value: SettingsValuesType[typeof field],
   ) => {
-    let newVal = value;
+    // const newValues = { ...values, [field]: value };
+    const newSettings = teamSettings ?? ({} as SettingsValuesType);
+    const newValues = { ...newSettings, [field]: value };
 
-    if (field === "ppr") newVal = parsePPR.fromString(value as string);
-    if (field === "superflex")
-      newVal = parseSuperflex.fromString(value as string);
+    // if (field === "numOfTeams") {
+    //   const positionsList = getPossibleDraftPositions(value as number);
+    //   setValues({ ...newValues, possibleDraftPositions: positionsList });
+    // } else {
+    //   setValues(newValues);
+    // }
 
-    const newValues = { ...values, [field]: newVal };
+    console.log("newValues", newValues);
 
-    if (field === "numOfTeams") {
-      const positionsList = getPossibleDraftPositions(value as number);
-      setValues({ ...newValues, possibleDraftPositions: positionsList });
-    } else {
-      setValues(newValues);
-    }
-    // const newSettings = { ...teamSettings, [field]: value };
-    // // newSettings[field] = value
-    // handleChange(newSettings);
+    // handleSettingsChange(parseSettings.fromFormValues(newValues));
+    handleSettingsChange(newValues);
   };
-
-  // const handleTeamsClick = (value: number | boolean | string) => {
-  //   if (typeof value !== "number") return;
-  //   const positionsList = getPossibleDraftPositions(value);
-  //   setPossibleDraftPositions(positionsList);
-  //   handleRadioChange("numOfTeams", value);
-  // };
-
-  // const handlePPRClick = (value: string) => {
-  //   const pprValue = parsePPR.fromString(value);
-  //   handleRadioChange("ppr", pprValue);
-  // };
-
-  // const handleSuperflexClick = (value: string) => {
-  //   const superflexValue = parseSuperflex.fromString(value);
-  //   handleRadioChange("superflex", superflexValue);
-  // };
 
   /** @TODO there's gotta be a neater way to write this function and its conditions... */
   const handleRosterChange = (
@@ -121,22 +80,14 @@ export default function TeamSettingsForm({
 
   return (
     <SettingsInputs
-      values={values}
-      // possibleDraftPositions={possibleDraftPositions}
-      // draftPosition={draftPosition}
-      // numberOfTeams={numberOfTeams}
-      // ppr={ppr}
-      // superflex={superflex}
+      values={teamSettings ?? ({} as SettingsValuesType)}
+      // values={values}
       // setDraftPosition={setDraftPosition}
       // setNumberOfTeams={setNumberOfTeams}
       // setPpr={setPpr}
       // setSuperflex={setSuperflex}
-      teamSettings={teamSettings}
-      // handleTeamsClick={handleTeamsClick}
-      // handlePPRClick={handlePPRClick}
-      // handleSuperflexClick={handleSuperflexClick}
+      // teamSettings={teamSettings}
       handleClick={handleRadioChange}
-      // handleRadioChange={handleRadioChange}
       handleRosterChange={handleRosterChange}
       darkMode={themeAtom === "dark"}
       editMode={editMode}

@@ -12,6 +12,7 @@ import {
 } from "~/app/_components/forms/TeamSettings/const";
 import RosterDetails from "./RosterDetails";
 import { SettingsValuesType } from "~/app/dashboard/teams/_components/TeamInfo/content";
+import { parsePPR, parseSuperflex } from "~/app/dashboard/teams/util";
 
 /**
  * @NOTE
@@ -25,44 +26,29 @@ import { SettingsValuesType } from "~/app/dashboard/teams/_components/TeamInfo/c
  */
 
 export function SettingsInputs({
-  // possibleDraftPositions,
-  // draftPosition,
-  // numberOfTeams,
-  // ppr,
-  // superflex,
-  teamSettings,
+  // teamSettings,
   values,
   // setDraftPosition,
   // setNumberOfTeams,
   // setPpr,
   // setSuperflex,
   handleClick,
-  // handleTeamsClick,
-  // handlePPRClick,
-  // handleSuperflexClick,
   // handleRadioChange,
   handleRosterChange,
   darkMode = false,
   editMode = false,
 }: {
-  // possibleDraftPositions: number[];
-  // draftPosition: TeamSettingsType["draftPosition"];
-  // numberOfTeams: TeamSettingsType["numOfTeams"];
-  // ppr: string;
-  // superflex: string;
-  teamSettings: TeamSettingsType;
+  // teamSettings: TeamSettingsType;
   values: SettingsValuesType;
   // setDraftPosition: (value: number) => void;
   // setNumberOfTeams: (value: number) => void;
   // setPpr: (value: string) => void;
   // setSuperflex: (value: string) => void;
+  // handleClick: (v: number | boolean) => void;
   handleClick: (
-    field: keyof TeamSettingsType,
-    value: number | boolean | string,
+    field: keyof SettingsValuesType,
+    value: SettingsValuesType[typeof field],
   ) => void;
-  // handleTeamsClick: (value: number | boolean | string) => void;
-  // handlePPRClick: (value: string) => void;
-  // handleSuperflexClick: (value: string) => void;
   // handleRadioChange: (
   //   field: keyof TeamSettingsType,
   //   value: number | boolean | string,
@@ -84,7 +70,6 @@ export function SettingsInputs({
         label={"no. teams in league"}
         // screen reader label
         form={`number of teams`}
-        // items={NUM_OF_TEAMS}
         editMode={editMode}
         darkMode={darkMode}
         value={numOfTeams}
@@ -93,12 +78,12 @@ export function SettingsInputs({
           htmlFor="numOfTeams"
           items={NUM_OF_TEAMS}
           //sends back the value of the radio button, does all logic stuff
-          handleClick={(v) => handleClick("numOfTeams", v)}
+          handleClick={(v) => handleClick("numOfTeams", v as number)}
           // selected and setSelected handle the headlessui funcionality
           selected={numOfTeams}
           // setSelected={setNumberOfTeams}
           // handleChange={v => handleRadioChange('numOfTeams', v)}
-          handleChange={(v) => handleClick("numOfTeams", v)}
+          handleChange={(v) => handleClick("numOfTeams", v as number)}
           // screen reader label
           form={`number of teams`}
         />
@@ -112,17 +97,17 @@ export function SettingsInputs({
         value={ppr}
       >
         <RadioGroup
-          /** @TODO whyyyyy */
-          // handleClick={(value: string | number | boolean) => {
-          //   if (typeof value !== "string") return;
-          //   handlePPRClick(value);
-          // }}
           htmlFor="ppr"
           items={PPR_OPTIONS}
+          // handleClick={(v) =>
+          //   handleClick("ppr", parsePPR.fromString(v as string))
+          // }
           handleClick={(v) => handleClick("ppr", v)}
           selected={ppr}
           // setSelected={setPpr}
-          // handleChange={v => handleRadioChange('ppr', v)}
+          // handleChange={(v) =>
+          //   handleClick("ppr", parsePPR.fromString(v as string))
+          // }
           handleChange={(v) => handleClick("ppr", v)}
           form={"p p r"}
         />
@@ -136,16 +121,17 @@ export function SettingsInputs({
         value={superflex}
       >
         <RadioGroup
-          // handleClick={(value: string | number | boolean) => {
-          //   if (typeof value !== "string") return;
-          //   handleSuperflexClick(value);
-          // }}
           htmlFor="superflex"
           items={SUPERFLEX_OPTIONS}
+          // handleClick={(v) =>
+          //   handleClick("superflex", parseSuperflex.fromString(v as string))
+          // }
           handleClick={(v) => handleClick("superflex", v)}
           selected={superflex}
           // setSelected={setSuperflex}
-          // handleChange={v => handleRadioChange('superflex', v)}
+          // handleChange={(v) =>
+          //   handleClick("superflex", parseSuperflex.fromString(v as string))
+          // }
           handleChange={(v) => handleClick("superflex", v)}
           form={"super flex"}
         />
@@ -163,9 +149,6 @@ export function SettingsInputs({
             {possibleDraftPositions.length > 8 ? (
               <>
                 <RadioGroup
-                  // handleClick={(value) =>
-                  //   handleRadioChange("draftPosition", value)
-                  // }
                   htmlFor="draftPosition"
                   handleClick={(v) => handleClick("draftPosition", v)}
                   form={"draft position"}
@@ -175,9 +158,6 @@ export function SettingsInputs({
                   handleChange={(v) => handleClick("draftPosition", v)}
                 />
                 <RadioGroup
-                  // handleClick={(value) =>
-                  //   handleRadioChange("draftPosition", value)
-                  // }
                   htmlFor="draftPosition"
                   handleClick={(v) => handleClick("draftPosition", v)}
                   form={"draft position"}
@@ -189,7 +169,6 @@ export function SettingsInputs({
               </>
             ) : (
               <RadioGroup
-                // handleClick={(value) => handleRadioChange("draftPosition", value)}
                 htmlFor="draftPosition"
                 handleClick={(v) => handleClick("draftPosition", v)}
                 form={"draft position"}
@@ -203,7 +182,8 @@ export function SettingsInputs({
         </SettingsGroup>
       )}
 
-      {teamSettings.roster && (
+      {/* {teamSettings.roster && ( */}
+      {values.roster && (
         <SettingsGroup
           label={"roster"}
           form={`roster`}
@@ -211,9 +191,11 @@ export function SettingsInputs({
           darkMode={darkMode}
         >
           <RosterDetails
-            rosterDetails={teamSettings.roster}
+            // rosterDetails={teamSettings.roster}
+            rosterDetails={values.roster}
             handleNumberChange={handleRosterChange}
-            items={ROSTER_OPTIONS as Array<keyof Roster>}
+            items={ROSTER_OPTIONS}
+            // items={ROSTER_OPTIONS as Array<keyof Roster>}
             editMode={editMode}
           />
         </SettingsGroup>

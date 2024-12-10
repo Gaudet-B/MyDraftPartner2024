@@ -3,6 +3,7 @@ import { playerRouter } from "./routers/player";
 import { teamRouter } from "./routers/team";
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
 import { userRouter } from "./routers/user";
+import { rankingRouter } from "./routers/ranking";
 
 /**
  * This is the primary router for your server.
@@ -12,6 +13,7 @@ import { userRouter } from "./routers/user";
 export const appRouter = createTRPCRouter({
   post: postRouter,
   player: playerRouter,
+  ranking: rankingRouter,
   team: teamRouter,
   user: userRouter,
 });
