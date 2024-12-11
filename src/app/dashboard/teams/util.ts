@@ -1,9 +1,10 @@
-import { Player } from "@prisma/client";
+import { Player, Prisma } from "@prisma/client";
 import {
   Roster,
   TeamSettings as TeamSettingsType,
 } from "./_components/TeamInfo";
-import { SettingsValuesType } from "./_components/TeamInfo/content";
+import { SettingsValuesType } from "./hooks/useTeamForm";
+import { DEFAULT_ROSTER_SETTINGS } from "~/app/_components/forms/TeamSettings/const";
 
 // const DEFAULT_TEAM_SETTINGS = {
 //   draftPosition: 1,
@@ -52,9 +53,10 @@ export const parseSettings = {
     return {
       draftPosition,
       numOfTeams,
-      possibleDraftPositions: getPossibleDraftPositions(numOfTeams),
+      // possibleDraftPositions: getPossibleDraftPositions(numOfTeams),
       ppr: parsePPR.toString(ppr),
       superflex: parseSuperflex.toString(superflex),
+      roster: settings.roster ?? DEFAULT_ROSTER_SETTINGS,
     };
   },
   fromFormValues: (values: SettingsValuesType): TeamSettingsType => {
@@ -64,6 +66,18 @@ export const parseSettings = {
       numOfTeams,
       ppr: parsePPR.fromString(ppr),
       superflex: parseSuperflex.fromString(superflex),
+    };
+  },
+  fromJson: (json: Prisma.JsonObject) => {
+    console.log("json", json);
+    // const settings = JSON.parse(json);
+    const settings = json;
+    console.log("settings", settings);
+    return {
+      draftPosition: settings.draftPosition as number,
+      numOfTeams: settings.numOfTeams as number,
+      ppr: settings.ppr as 0 | 0.5 | 1,
+      superflex: settings.superflex as boolean,
     };
   },
 };

@@ -1,17 +1,12 @@
 import { z } from "zod";
 
-import {
-  createTRPCRouter,
-  protectedProcedure,
-  publicProcedure,
-} from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
 export const teamRouter = createTRPCRouter({
   getAllTeamsByUser: protectedProcedure.query(async ({ ctx }) => {
     const teams = await ctx.db.team.findMany({
       where: { userId: ctx.session?.user.id },
     });
-    console.log("user", ctx.session?.user.id);
     return teams;
   }),
   getOne: protectedProcedure

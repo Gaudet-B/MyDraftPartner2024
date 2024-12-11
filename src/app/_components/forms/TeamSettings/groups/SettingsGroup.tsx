@@ -3,13 +3,15 @@ import { PropsWithChildren } from "react";
 function ValueContainer({
   value,
   darkMode = false,
+  editMode = false,
 }: {
   value?: string | number | boolean;
   darkMode: boolean;
+  editMode: boolean;
 }) {
   return (
     <div
-      className={`flex flex-row items-center justify-start text-center text-base font-bold`}
+      className={`${editMode ? "col-span-2" : "col-span-1"} flex flex-row items-center justify-start text-center text-base font-bold`}
     >
       <div
         className={`flex flex-row items-center justify-center border-2 border-double ${
@@ -39,7 +41,7 @@ export default function SettingsGroup({
   return (
     <>
       <label
-        className={`flex flex-col justify-center leading-relaxed`}
+        className={`col-span-1 flex flex-col justify-start pt-[11px] leading-relaxed`}
         htmlFor={form}
       >
         <span>{label}</span>
@@ -47,7 +49,7 @@ export default function SettingsGroup({
       {editMode ? (
         children
       ) : (
-        <ValueContainer value={value} darkMode={darkMode} />
+        <ValueContainer value={value} darkMode={darkMode} editMode={editMode} />
       )}
     </>
   );

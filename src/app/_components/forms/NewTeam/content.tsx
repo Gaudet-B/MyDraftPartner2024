@@ -25,17 +25,9 @@ export function FormButton({
   handleSubmit: () => void;
   isModal: boolean;
 }) {
-  // const [themeAtom] = useThemeAtom();
-
   return (
     <FormButtonContainer isModal={isModal}>
-      <Button
-        bold
-        // theme={"transparent-hover"}
-        theme="submit"
-        onClick={handleSubmit}
-        // additionalClasses={'text-white'}
-      >
+      <Button bold theme="submit" onClick={handleSubmit}>
         {isModal ? "edit" : "create"}
       </Button>
     </FormButtonContainer>
@@ -68,7 +60,6 @@ function SettingsButtonContainer({
         showSettings ? hideColors : showColors
       }`}
       onClick={showSettings ? handleHideSettings : handleShowSettings}
-      // style={{ textShadow: "none" }}
     >
       {children}
     </div>
@@ -111,7 +102,6 @@ export function SettingsLabel({ showSettings }: { showSettings: boolean }) {
     <label>
       <span
         className={`${showSettings ? "font-semibold text-gray-800" : "text-white"} font-sans drop-shadow-none`}
-        // style={{ textShadow: "none" }}
       >
         league settings
       </span>
@@ -127,7 +117,6 @@ export function SettingsToggle({
 }: {
   darkMode: boolean;
   showSettings: boolean;
-  // setShowSettings: (value: boolean) => void;
   handleShowSettings: () => void;
   handleHideSettings: () => void;
 }) {
@@ -164,4 +153,8 @@ export function LocalContainer({
 
 export function TitleContainer({ children }: PropsWithChildren<{}>) {
   return <div className="flex w-full justify-center pb-6 pt-4">{children}</div>;
+}
+
+export function FormWrapper({ children }: PropsWithChildren) {
+  return <div className="pl-9">{children}</div>;
 }

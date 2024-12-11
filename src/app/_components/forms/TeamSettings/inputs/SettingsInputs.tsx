@@ -1,9 +1,6 @@
 import SettingsGroup from "../groups/SettingsGroup";
 import RadioGroup from "../groups/RadioGroup";
-import {
-  Roster,
-  TeamSettings as TeamSettingsType,
-} from "~/app/dashboard/teams/_components/TeamInfo/info";
+import { Roster } from "~/app/dashboard/teams/_components/TeamInfo/info";
 import {
   NUM_OF_TEAMS,
   PPR_OPTIONS,
@@ -11,8 +8,20 @@ import {
   SUPERFLEX_OPTIONS,
 } from "~/app/_components/forms/TeamSettings/const";
 import RosterDetails from "./RosterDetails";
-import { SettingsValuesType } from "~/app/dashboard/teams/_components/TeamInfo/content";
-import { parsePPR, parseSuperflex } from "~/app/dashboard/teams/util";
+import { SettingsValuesType } from "~/app/dashboard/teams/hooks/useTeamForm";
+import { getPossibleDraftPositions } from "~/app/dashboard/teams/util";
+import { PropsWithChildren, useState } from "react";
+
+const SettingsGrid = ({
+  children,
+  editMode,
+}: PropsWithChildren<{ editMode: boolean }>) => (
+  <div
+    className={`text-md grid ${editMode ? "grid-cols-3" : "grid-cols-2"} gap-5 text-right font-normal`}
+  >
+    {children}
+  </div>
+);
 
 /**
  * @NOTE
@@ -61,11 +70,19 @@ export function SettingsInputs({
   darkMode?: boolean;
   editMode?: boolean;
 }) {
-  const { possibleDraftPositions, draftPosition, numOfTeams, ppr, superflex } =
-    values;
+  const { draftPosition, numOfTeams, ppr, superflex } = values;
+
+  const [possibleDraftPositions, setPossibleDraftPositions] = useState<
+    Array<number>
+  >(getPossibleDraftPositions(numOfTeams));
+
+  const handleNumOfTeamsChange = (value: number) => {
+    handleClick("numOfTeams", value);
+    setPossibleDraftPositions(getPossibleDraftPositions(value));
+  };
 
   return (
-    <div className={`text-md grid grid-cols-2 gap-5 text-right font-normal`}>
+    <SettingsGrid editMode={editMode}>
       <SettingsGroup
         label={"no. teams in league"}
         // screen reader label
@@ -74,19 +91,21 @@ export function SettingsInputs({
         darkMode={darkMode}
         value={numOfTeams}
       >
-        <RadioGroup
-          htmlFor="numOfTeams"
-          items={NUM_OF_TEAMS}
-          //sends back the value of the radio button, does all logic stuff
-          handleClick={(v) => handleClick("numOfTeams", v as number)}
-          // selected and setSelected handle the headlessui funcionality
-          selected={numOfTeams}
-          // setSelected={setNumberOfTeams}
-          // handleChange={v => handleRadioChange('numOfTeams', v)}
-          handleChange={(v) => handleClick("numOfTeams", v as number)}
-          // screen reader label
-          form={`number of teams`}
-        />
+        <div className={editMode ? "col-span-2" : "col-span-1"}>
+          <RadioGroup
+            htmlFor="numOfTeams"
+            items={NUM_OF_TEAMS}
+            //sends back the value of the radio button, does all logic stuff
+            handleClick={(v) => handleNumOfTeamsChange(v as number)}
+            // selected and setSelected handle the headlessui funcionality
+            selected={numOfTeams}
+            // setSelected={setNumberOfTeams}
+            // handleChange={v => handleRadioChange('numOfTeams', v)}
+            handleChange={(v) => handleNumOfTeamsChange(v as number)}
+            // screen reader label
+            form={`number of teams`}
+          />
+        </div>
       </SettingsGroup>
 
       <SettingsGroup
@@ -96,21 +115,23 @@ export function SettingsInputs({
         darkMode={darkMode}
         value={ppr}
       >
-        <RadioGroup
-          htmlFor="ppr"
-          items={PPR_OPTIONS}
-          // handleClick={(v) =>
-          //   handleClick("ppr", parsePPR.fromString(v as string))
-          // }
-          handleClick={(v) => handleClick("ppr", v)}
-          selected={ppr}
-          // setSelected={setPpr}
-          // handleChange={(v) =>
-          //   handleClick("ppr", parsePPR.fromString(v as string))
-          // }
-          handleChange={(v) => handleClick("ppr", v)}
-          form={"p p r"}
-        />
+        <div className={editMode ? "col-span-2" : "col-span-1"}>
+          <RadioGroup
+            htmlFor="ppr"
+            items={PPR_OPTIONS}
+            // handleClick={(v) =>
+            //   handleClick("ppr", parsePPR.fromString(v as string))
+            // }
+            handleClick={(v) => handleClick("ppr", v)}
+            selected={ppr}
+            // setSelected={setPpr}
+            // handleChange={(v) =>
+            //   handleClick("ppr", parsePPR.fromString(v as string))
+            // }
+            handleChange={(v) => handleClick("ppr", v)}
+            form={"p p r"}
+          />
+        </div>
       </SettingsGroup>
 
       <SettingsGroup
@@ -120,21 +141,23 @@ export function SettingsInputs({
         darkMode={darkMode}
         value={superflex}
       >
-        <RadioGroup
-          htmlFor="superflex"
-          items={SUPERFLEX_OPTIONS}
-          // handleClick={(v) =>
-          //   handleClick("superflex", parseSuperflex.fromString(v as string))
-          // }
-          handleClick={(v) => handleClick("superflex", v)}
-          selected={superflex}
-          // setSelected={setSuperflex}
-          // handleChange={(v) =>
-          //   handleClick("superflex", parseSuperflex.fromString(v as string))
-          // }
-          handleChange={(v) => handleClick("superflex", v)}
-          form={"super flex"}
-        />
+        <div className={editMode ? "col-span-2" : "col-span-1"}>
+          <RadioGroup
+            htmlFor="superflex"
+            items={SUPERFLEX_OPTIONS}
+            // handleClick={(v) =>
+            //   handleClick("superflex", parseSuperflex.fromString(v as string))
+            // }
+            handleClick={(v) => handleClick("superflex", v)}
+            selected={superflex}
+            // setSelected={setSuperflex}
+            // handleChange={(v) =>
+            //   handleClick("superflex", parseSuperflex.fromString(v as string))
+            // }
+            handleChange={(v) => handleClick("superflex", v)}
+            form={"super flex"}
+          />
+        </div>
       </SettingsGroup>
 
       {possibleDraftPositions && possibleDraftPositions.length > 0 && (
@@ -145,7 +168,9 @@ export function SettingsInputs({
           darkMode={darkMode}
           value={draftPosition}
         >
-          <div className={`flex flex-col gap-1`}>
+          <div
+            className={`${editMode ? "col-span-2" : "col-span-1"} flex flex-col gap-1`}
+          >
             {possibleDraftPositions.length > 8 ? (
               <>
                 <RadioGroup
@@ -190,16 +215,18 @@ export function SettingsInputs({
           editMode={editMode}
           darkMode={darkMode}
         >
-          <RosterDetails
-            // rosterDetails={teamSettings.roster}
-            rosterDetails={values.roster}
-            handleNumberChange={handleRosterChange}
-            items={ROSTER_OPTIONS}
-            // items={ROSTER_OPTIONS as Array<keyof Roster>}
-            editMode={editMode}
-          />
+          <div className="col-span-2">
+            <RosterDetails
+              // rosterDetails={teamSettings.roster}
+              rosterDetails={values.roster}
+              handleNumberChange={handleRosterChange}
+              items={ROSTER_OPTIONS}
+              // items={ROSTER_OPTIONS as Array<keyof Roster>}
+              editMode={editMode}
+            />
+          </div>
         </SettingsGroup>
       )}
-    </div>
+    </SettingsGrid>
   );
 }

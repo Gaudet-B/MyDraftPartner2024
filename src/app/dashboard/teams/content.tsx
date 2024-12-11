@@ -6,13 +6,11 @@ import { backgroundColors } from "@designsystem/colors";
 import transition from "@designsystem/class-names/transition";
 import { NewTeamButton, TeamButtons } from "./_components/TeamButtons";
 import TeamInfo from "./_components/TeamInfo";
-/** @TODO change to `NewTeamForm` ??? */
-import NewTeamForm, { FormValuesType } from "../../_components/forms/NewTeam";
+import NewTeamForm from "../../_components/forms/NewTeam";
 import { TeamSettings as TeamSettingsType } from "./_components/TeamInfo/info";
-import useTeamForm from "./hooks/useTeamForm";
+import useTeamForm, { FormValuesType } from "./hooks/useTeamForm";
 import { useThemeAtom } from "../atoms";
 import H1 from "~/app/_components/design-system/typography/H1";
-import { textColors } from "~/app/_components/design-system/colors/text";
 
 export type TeamType = {
   settings: TeamSettingsType;
@@ -90,17 +88,11 @@ export default function TeamsContent() {
     >
       <div
         className={`z-10 w-full max-w-[900px] rounded-3xl bg-opacity-80 px-[1px] py-3 shadow-lg ${transition.standard} ${colorClasses}`}
-        // style={{
-        //   scrollbarWidth: "thin",
-        //   scrollbarColor: "rgba(0, 0, 0, 0.5) rgba(0, 0, 0, 0.1)",
-        //   scrollbarGutter: "auto",
-        // }}
       >
         <div className="h-[80vh] overflow-auto">
           <div
             className={`font-aquire w-full pt-5 text-center ${themeAtom === "dark" ? "text-gray-300" : "text-gray-700"}`}
           >
-            {/** @TODO change font - just here or all H1s? */}
             <H1>My Teams</H1>
           </div>
           <div className="flex w-full flex-col items-center p-4">

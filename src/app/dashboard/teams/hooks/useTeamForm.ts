@@ -1,16 +1,29 @@
 import { useMemo, useState } from "react";
-// import { MutateOptions } from "@tanstack/react-query";
-// import { TRPCClientErrorLike } from "@trpc/client";
-// import { JsonValue } from "@prisma/client/runtime/library";
-import { Team } from "@prisma/client";
+import { Player, Prisma, Team } from "@prisma/client";
 import { api } from "~/trpc/react";
-import { FormValuesType } from "../../../_components/forms/NewTeam/NewTeamForm";
+import { Roster as RosterType } from "../../../dashboard/teams/_components/TeamInfo/info";
 import {
   CONTENT_MAP,
   TeamSettings as TeamSettingsType,
 } from "../_components/TeamInfo/info";
-import { useQueryClient } from "@tanstack/react-query";
 import { parseSettings } from "../util";
+
+export type SettingsValuesType = {
+  ppr: "NO" | "0.5" | "1.0";
+  superflex: "YES" | "NO";
+  draftPosition: number;
+  // possibleDraftPositions: Array<number>;
+  numOfTeams: number;
+  roster: RosterType;
+};
+
+export type FormValuesType = {
+  name: string;
+  league: string;
+  ranks?: Array<{ player: Player["id"]; rank: number }>;
+  roster?: RosterType;
+  settings: SettingsValuesType;
+};
 
 export type TeamType = {
   settings: TeamSettingsType;
@@ -22,11 +35,6 @@ type TeamMutation = {
   league: string;
   settings: TeamSettingsType;
 };
-// type TeamMutationOptions = MutateOptions<TeamMutation>
-// type TeamMutationOptions = {
-//   onSuccess?: (data: Team) => void;
-//   onError?: (error: TRPCClientErrorLike<{input: TeamMutation; output: TeamMutation; transformer: boolean; errorShape: {}}>) => void;
-// };
 
 export type ContentTab = keyof typeof CONTENT_MAP;
 export type EditModeKeys = ContentTab | "NEW_TEAM";
@@ -41,11 +49,8 @@ export const INITIAL_EDIT_MODES: { [key in EditModeKeys]: boolean } = {
 export type EditMode = typeof INITIAL_EDIT_MODES;
 
 export default function useTeamForm() {
-  /** @TODO when (and how?) to invalidate this query? */
   const teamsQuery = api.team.getAllTeamsByUser.useQuery();
-  // const { data, isLoading, isError } = api.team.getAllTeamsByUser.useQuery();
   const { data } = teamsQuery;
-  console.log("data", data?.[0]);
 
   const [editMode, setEditMode] = useState(INITIAL_EDIT_MODES);
   const [activeTab, setActiveTab] = useState<ContentTab>("INFO");
@@ -100,16 +105,12 @@ export default function useTeamForm() {
     createTeamMutation.mutate(t, {
       onSuccess: (data) => {
         setActiveTeam(data.id);
-        // setShowForm(false);
-        // useQueryClient().invalidateQueries();
-        // return data.id;
         newId = data.id;
         api.team.getAllTeamsByUser.useQuery().refetch();
       },
       /** @TODO need real error handling here... */
       onError: (error) => {
         console.error("Error creating team:", error);
-        // newId = -1;
       },
     });
     return newId;
@@ -119,10 +120,7 @@ export default function useTeamForm() {
     updateTeamMutation.mutate(t, {
       onSuccess: (data) => {
         setActiveTeam(data.id);
-        // setShowForm(false);
-        // queryClient.invalidateQueries();
         handleEditMode();
-        // api.team.getAllTeamsByUser.useQuery().refetch();
         teamsQuery.refetch();
       },
       /** @TODO need real error handling here... */
@@ -133,20 +131,16 @@ export default function useTeamForm() {
 
   const handleCreate = (team: FormValuesType) => {
     const { name, league, ranks, roster, settings } = team;
-    const newRoster = roster ? roster : ({} as FormValuesType["roster"]);
+    const newRoster = roster ? roster : ({} as RosterType);
     const newSettings = settings
       ? parseSettings.fromFormValues(settings)
       : ({} as TeamSettingsType);
-
-    // ? { ...settings, roster: { ...newRoster } }
-    // : { settings: { roster: { ...newRoster } } };
 
     const newId = createTeam({
       name,
       league,
       settings: { ...newSettings, roster: { ...newRoster } },
     });
-    console.log("newId", newId);
 
     if (ranks) {
       const { data } = api.ranking.getRanks.useQuery({ teamId: newId });
@@ -165,15 +159,11 @@ export default function useTeamForm() {
     /** @TODO error here? */
     if (!activeTeam) return;
 
-    console.log("team", team);
     const { name, league, ranks, roster, settings } = team;
-    const newRoster = roster ? roster : ({} as FormValuesType["roster"]);
+    const newRoster = roster ? roster : ({} as RosterType);
     const newSettings = settings
       ? parseSettings.fromFormValues(settings)
       : ({} as TeamSettingsType);
-
-    // ? { ...settings, roster: { ...newRoster } }
-    // : { roster: { ...newRoster } };
 
     updateTeam({
       id: activeTeam,
@@ -205,17 +195,6 @@ export default function useTeamForm() {
     setNewTeamFormState({ ...newTeamFormState, ...newState });
   };
 
-  /** @TODO this needs work... maybe? */
-  // const handleTeamInfoFieldChange = (
-  //   e: React.ChangeEvent<HTMLInputElement>,
-  // ) => {
-  //   e?.preventDefault?.();
-  //   const newState = teamInfoFormState
-  //     ? { ...teamInfoFormState, [e.target.name]: e.target.value }
-  //     : ({} as FormValuesType);
-  //   setTeamInfoFormState({ ...teamInfoFormState, ...newState });
-  // };
-
   const handleTeamInfoFieldChange = (
     field: keyof FormValuesType,
     value: FormValuesType[typeof field],
@@ -238,10 +217,19 @@ export default function useTeamForm() {
     }
   };
 
-  const team = useMemo(
-    () => data?.find((t) => t.id === activeTeam),
-    [activeTeam, data],
-  );
+  const team = useMemo(() => {
+    const t = data?.find((t) => t.id === activeTeam);
+    const settings = parseSettings.fromJson(
+      (t?.settings as Prisma.JsonObject) ?? ({} as Prisma.JsonObject),
+    );
+    t &&
+      setTeamInfoFormState({
+        name: t.name,
+        league: t.league,
+        settings: parseSettings.toFormValues(settings),
+      });
+    return t;
+  }, [activeTeam, data]);
 
   return {
     display: {

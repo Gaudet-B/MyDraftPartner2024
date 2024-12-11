@@ -8,13 +8,12 @@ import { useThemeAtom } from "~/app/dashboard/atoms";
 import { NameAndLeague, Notes, Ranks, Settings } from "./content";
 import { TeamType } from "../../content";
 import { textColors } from "~/app/_components/design-system/colors/text";
-import { FormValuesType } from "~/app/_components/forms/NewTeam";
 import transition from "~/app/_components/design-system/class-names/transition";
 import {
   ContentTab,
   EditMode,
   EditModeKeys,
-  INITIAL_EDIT_MODES,
+  FormValuesType,
 } from "../../hooks/useTeamForm";
 
 /** @TODO HOVER EFFECTS ON BUTTONS */
@@ -64,31 +63,24 @@ export type TeamSettings = {
   roster?: Roster;
   numOfTeams: number;
   draftPosition: number;
-  // ppr: number;
   ppr: 0 | 0.5 | 1;
   superflex: boolean;
 };
 
-/** @TODO add a 'callback' prop to this type */
 export type ContentProps = {
-  // activeTab: ContentTabs;
   darkMode: boolean;
   editMode: EditMode;
   formState?: FormValuesType;
   handleChange: (f: keyof FormValuesType, v: FormValuesType[typeof f]) => void;
-  // setEditMode: (editMode: { [key in EditModeKeys]: boolean }) => void;
   team: TeamType;
 };
 
 function OuterContainer({
   children,
-  // dynamicClasses = "border-gray-300 bg-gray-200",
   dynamicClasses = `${borderColors.lightTertiary} ${backgroundColors.lightAccent}`,
 }: PropsWithChildren<{ dynamicClasses: string }>) {
   return (
-    <div className={`max-w-[60vw] rounded-xl border ${dynamicClasses}`}>
-      {children}
-    </div>
+    <div className={`rounded-xl border ${dynamicClasses}`}>{children}</div>
   );
 }
 
@@ -118,7 +110,7 @@ function InfoContainer({
 }
 
 function ContentContainer({ children }: PropsWithChildren) {
-  return <div className={`pt-4`}>{children}</div>;
+  return <div className={`pl-4 pt-4`}>{children}</div>;
 }
 
 function NotebookTabs({
@@ -235,12 +227,10 @@ function SaveChangesButton({ handleSave }: { handleSave: () => void }) {
 
 function InfoContent({
   darkMode,
-  // editMode: editModeMap,
   editMode,
   formState,
   handleChange,
   team,
-  // setEditMode,
   activeTab = "INFO",
 }: {
   darkMode: boolean;
@@ -248,13 +238,8 @@ function InfoContent({
   formState?: FormValuesType;
   handleChange: (f: keyof FormValuesType, v: FormValuesType[typeof f]) => void;
   team: TeamType;
-  // setEditMode: (editMode: { [key in EditModeKeys]: boolean }) => void;
   activeTab: ContentTab;
 }) {
-  // const editMode = useMemo(
-  //   () => editModeMap[activeTab],
-  //   [editModeMap, activeTab],
-  // );
   const Content = useMemo(() => CONTENT_MAP[activeTab], [activeTab]);
   const props = useMemo(() => {
     return {
@@ -263,7 +248,6 @@ function InfoContent({
       formState,
       team,
       handleChange,
-      // setEditMode,
     };
   }, [darkMode, team, editMode, activeTab]);
   return <Content {...props} />;
@@ -294,27 +278,13 @@ export default function TeamInfo({
   const [theme] = useAtom(useThemeAtom);
   const darkMode = useMemo(() => theme === "dark", [theme]);
 
-  // const [editMode, setEditMode] = useState(INITIAL_EDIT_MODES);
-  // const [activeTab, setActiveTab] = useState<ContentTab>("INFO");
-
-  // const handleEditMode = () => {
-  //   setEditMode((prev) => ({
-  //     ...prev,
-  //     [activeTab]: !prev[activeTab],
-  //   }));
-  // };
-
   /** @TODO move this to `useTeamForm`? */
-  const handleFormSubmit = () => {
-    console.log("formState", formState);
-    formState && handleEdit(formState);
-  };
+  const handleSaveChanges = () => formState && handleEdit(formState);
 
+  /** @TODO add transition to this (and perhaps children) for smooth expanding */
   return (
-    // <div>Team Info</div>
     <OuterContainer
       dynamicClasses={
-        // darkMode ? "border-gray-800 bg-gray-900" : "border-gray-300 bg-gray-200"
         darkMode
           ? `${borderColors.darkTertiary} ${backgroundColors.darkSecondary}`
           : `${borderColors.lightTertiary} ${backgroundColors.lightAccent}`
@@ -333,8 +303,7 @@ export default function TeamInfo({
         <InfoContainer
           dynamicClasses={
             darkMode
-              ? // ? `border-gray-500 ${backgroundColors.darkAccent}`
-                `${borderColors.darkSecondary} ${backgroundColors.darkAccent}`
+              ? `${borderColors.darkSecondary} ${backgroundColors.darkAccent}`
               : `${borderColors.lightTertiary} ${backgroundColors.lightSecondary}`
           }
         >
@@ -349,12 +318,11 @@ export default function TeamInfo({
               editMode={editMode}
               formState={formState}
               handleChange={handleFieldChange}
-              // setEditMode={setEditMode}
               team={team}
             />
           </ContentContainer>
           {editMode[activeTab] && (
-            <SaveChangesButton handleSave={handleFormSubmit} />
+            <SaveChangesButton handleSave={handleSaveChanges} />
           )}
         </InfoContainer>
       </InnerContainer>

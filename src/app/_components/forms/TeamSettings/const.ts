@@ -11,3 +11,13 @@ export const ROSTER_OPTIONS = [
   "k",
   "bench",
 ] as const;
+export const DEFAULT_ROSTER_SETTINGS = {
+  qb: { starters: 1, max: 2 },
+  rb: { starters: 2 },
+  wr: { starters: 2 },
+  te: { starters: 1, max: 2 },
+  flex: { starters: 1 },
+  dst: { starters: 1, max: 1 },
+  k: { starters: 1, max: 1 },
+  bench: { max: 6 },
+};
