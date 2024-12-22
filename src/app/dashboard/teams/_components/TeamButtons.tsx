@@ -5,10 +5,12 @@ import { textColors } from "~/app/_components/design-system/colors/text";
 
 function ButtonsContainer({ children }: PropsWithChildren) {
   return (
-    <div
-      className={`flex w-full flex-row flex-wrap items-center justify-evenly gap-4 px-4 py-2 font-serif`}
-    >
-      {children}
+    <div className="w-4/5">
+      <div
+        className={`flex w-full flex-row flex-wrap items-center justify-evenly gap-4 px-4 py-2 font-serif`}
+      >
+        {children}
+      </div>
     </div>
   );
 }

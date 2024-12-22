@@ -21,7 +21,7 @@ export type FormValuesType = {
   name: string;
   league: string;
   ranks?: Array<{ player: Player["id"]; rank: number }>;
-  roster?: RosterType;
+  // roster?: RosterType;
   settings: SettingsValuesType;
 };
 
@@ -29,11 +29,16 @@ export type TeamType = {
   settings: TeamSettingsType;
 } & Team;
 
-/** @TODO typeof settings??? */
 type TeamMutation = {
   name: string;
   league: string;
-  settings: TeamSettingsType;
+  settings: {
+    draftPosition: number;
+    numOfTeams: number;
+    ppr: 0 | 0.5 | 1;
+    roster: RosterType;
+    superflex: boolean;
+  };
 };
 
 export type ContentTab = keyof typeof CONTENT_MAP;
@@ -130,16 +135,17 @@ export default function useTeamForm() {
     });
 
   const handleCreate = (team: FormValuesType) => {
-    const { name, league, ranks, roster, settings } = team;
-    const newRoster = roster ? roster : ({} as RosterType);
-    const newSettings = settings
-      ? parseSettings.fromFormValues(settings)
-      : ({} as TeamSettingsType);
+    const { name, league, ranks, settings } = team;
+    // const { roster } = settings;
+    // const newRoster = roster ? roster : ({} as RosterType);
+    const newSettings = parseSettings.fromFormValues(
+      settings ?? ({} as SettingsValuesType),
+    );
 
     const newId = createTeam({
       name,
       league,
-      settings: { ...newSettings, roster: { ...newRoster } },
+      settings: { ...newSettings },
     });
 
     if (ranks) {
@@ -158,18 +164,22 @@ export default function useTeamForm() {
   const handleEdit = (team: FormValuesType) => {
     /** @TODO error here? */
     if (!activeTeam) return;
+    console.log("team", team);
 
-    const { name, league, ranks, roster, settings } = team;
-    const newRoster = roster ? roster : ({} as RosterType);
-    const newSettings = settings
-      ? parseSettings.fromFormValues(settings)
-      : ({} as TeamSettingsType);
+    const { name, league, ranks, settings } = team;
+    // const { roster } = settings;
+    // const newRoster = roster ? roster : ({} as RosterType);
+    const newSettings = parseSettings.fromFormValues(
+      settings ?? ({} as SettingsValuesType),
+    );
 
+    console.log("newTeam", { name, league, settings: newSettings });
     updateTeam({
       id: activeTeam,
       name,
       league,
-      settings: { ...newSettings, roster: { ...newRoster } },
+      settings: { ...newSettings },
+      // settings: { ...newSettings, roster: { ...newRoster } },
     });
 
     if (ranks) {
@@ -203,18 +213,7 @@ export default function useTeamForm() {
       ? { ...teamInfoFormState }
       : ({} as FormValuesType);
 
-    /** @TODO this doesn't handle ROSTER */
-    if (field === "settings") {
-      const newVal = value as FormValuesType["settings"];
-
-      const newSettings =
-        teamInfoFormState?.settings ?? ({} as FormValuesType["settings"]);
-
-      const newInfo = { ...newState, settings: { ...newSettings, ...newVal } };
-      setTeamInfoFormState(newInfo);
-    } else {
-      setTeamInfoFormState({ ...newState, [field]: value });
-    }
+    setTeamInfoFormState({ ...newState, [field]: value });
   };
 
   const team = useMemo(() => {

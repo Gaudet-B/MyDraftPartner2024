@@ -24,41 +24,36 @@ export default function TeamSettingsForm({
   ) => {
     const newSettings = teamSettings ?? ({} as SettingsValuesType);
 
-    const newValues =
-      field === "numOfTeams"
-        ? {
-            ...newSettings,
-            [field]: value as number,
-            possibleDraftPositions: getPossibleDraftPositions(value as number),
-          }
-        : { ...newSettings, [field]: value };
+    const newValues = { ...newSettings, [field]: value };
 
     handleSettingsChange(newValues);
   };
 
-  /** @TODO there's gotta be a neater way to write this function and its conditions... */
   const handleRosterChange = (
     position: keyof Roster,
     startersOrMax: "starters" | "max",
-    value: number,
+    change: -1 | 1,
   ) => {
-    // const newSettings = { ...teamSettings };
-    // const newRoster = newSettings.roster;
-    // let newValue: number;
-    // if (position === "bench") newValue = newRoster[position]["max"] += value;
-    // else if (position === "flex")
-    //   newValue = newRoster[position]["starters"] += value;
-    // else
-    //   newValue = newRoster[position]
-    //     ? (newRoster[position][startersOrMax] += value)
-    //     : value;
-    // handleChange({
-    //   ...newSettings,
-    //   roster: {
-    //     ...newRoster,
-    //     [position]: { ...newRoster[position], [startersOrMax]: newValue },
-    //   },
-    // });
+    const settings = teamSettings
+      ? { ...teamSettings }
+      : ({} as SettingsValuesType);
+    const { roster } = settings;
+    const newRoster = roster ? { ...roster } : ({} as Roster);
+    const value = newRoster[position][startersOrMax] ?? 0;
+    const newValue = value + change;
+
+    const newSettings = {
+      ...settings,
+      roster: {
+        ...newRoster,
+        [position]: {
+          ...newRoster[position],
+          [startersOrMax]: newValue,
+        },
+      },
+    };
+
+    handleSettingsChange(newSettings);
   };
 
   return (

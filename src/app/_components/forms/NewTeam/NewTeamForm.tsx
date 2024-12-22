@@ -71,7 +71,6 @@ export default function NewTeamForm({
             handleChange={handleFieldChange}
           />
 
-          {/* <SettingsLabel showSettings={showSettings} /> */}
           <FormLabel for={"settings"}>league settings</FormLabel>
           <SettingsToggle
             darkMode={themeAtom === "dark"}

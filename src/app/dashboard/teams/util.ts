@@ -1,6 +1,6 @@
 import { Player, Prisma } from "@prisma/client";
 import {
-  Roster,
+  Roster as RosterType,
   TeamSettings as TeamSettingsType,
 } from "./_components/TeamInfo";
 import { SettingsValuesType } from "./hooks/useTeamForm";
@@ -49,34 +49,37 @@ export const parseSuperflex = {
 
 export const parseSettings = {
   toFormValues: (settings: TeamSettingsType): SettingsValuesType => {
-    const { numOfTeams, draftPosition, ppr, superflex } = settings;
+    const { numOfTeams, draftPosition, ppr, roster, superflex } = settings;
     return {
       draftPosition,
       numOfTeams,
       // possibleDraftPositions: getPossibleDraftPositions(numOfTeams),
       ppr: parsePPR.toString(ppr),
       superflex: parseSuperflex.toString(superflex),
-      roster: settings.roster ?? DEFAULT_ROSTER_SETTINGS,
+      roster: roster ?? DEFAULT_ROSTER_SETTINGS,
     };
   },
-  fromFormValues: (values: SettingsValuesType): TeamSettingsType => {
-    const { draftPosition, numOfTeams, ppr, superflex } = values;
+  fromFormValues: (values: SettingsValuesType) => {
+    /** @TODO handle error here for potential undefined values */
+    const { draftPosition, numOfTeams, ppr, roster, superflex } = values;
     return {
+      superflex: parseSuperflex.fromString(superflex),
+      ppr: parsePPR.fromString(ppr) as TeamSettingsType["ppr"],
+      /** @TODO convert to JSON first? */
+      roster: roster ?? ({} as RosterType),
+      // roster: roster ?? DEFAULT_ROSTER_SETTINGS,
+      // roster,
       draftPosition,
       numOfTeams,
-      ppr: parsePPR.fromString(ppr),
-      superflex: parseSuperflex.fromString(superflex),
     };
   },
   fromJson: (json: Prisma.JsonObject) => {
-    console.log("json", json);
-    // const settings = JSON.parse(json);
     const settings = json;
-    console.log("settings", settings);
     return {
       draftPosition: settings.draftPosition as number,
       numOfTeams: settings.numOfTeams as number,
       ppr: settings.ppr as 0 | 0.5 | 1,
+      roster: settings.roster as RosterType,
       superflex: settings.superflex as boolean,
     };
   },
@@ -84,7 +87,7 @@ export const parseSettings = {
 
 export const checkForEmptyPositions = (
   playerList: Array<Player>,
-  rosterSettings: Roster,
+  rosterSettings: RosterType,
 ) => {
   // if (!playerList || !rosterSettings) return []
 
@@ -100,7 +103,7 @@ export const checkForEmptyPositions = (
 
 export const parseStartersFromRoster = (
   playerList: Array<Player>,
-  rosterSettings: Roster,
+  rosterSettings: RosterType,
   emptyPositionList: string[],
 ) => {
   // if (!playerList || !rosterSettings || !emptyPositionList)
@@ -110,7 +113,7 @@ export const parseStartersFromRoster = (
   const starters: { [key: string]: Array<Player> } = {};
   const positions = Object.keys(rosterSettings).filter(
     (key) => !emptyPositionList.includes(key),
-  ) as Array<keyof Roster>;
+  ) as Array<keyof RosterType>;
 
   for (const position of positions) {
     starters[position] = [];

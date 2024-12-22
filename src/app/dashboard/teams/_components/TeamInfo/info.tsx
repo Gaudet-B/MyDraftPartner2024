@@ -109,7 +109,7 @@ function InfoContainer({
   );
 }
 
-function ContentContainer({ children }: PropsWithChildren) {
+function InfoContentContainer({ children }: PropsWithChildren) {
   return <div className={`pl-4 pt-4`}>{children}</div>;
 }
 
@@ -225,14 +225,7 @@ function SaveChangesButton({ handleSave }: { handleSave: () => void }) {
   );
 }
 
-function InfoContent({
-  darkMode,
-  editMode,
-  formState,
-  handleChange,
-  team,
-  activeTab = "INFO",
-}: {
+function InfoContent(props: {
   darkMode: boolean;
   editMode: { [key in EditModeKeys]: boolean };
   formState?: FormValuesType;
@@ -240,16 +233,17 @@ function InfoContent({
   team: TeamType;
   activeTab: ContentTab;
 }) {
+  const { activeTab } = props;
   const Content = useMemo(() => CONTENT_MAP[activeTab], [activeTab]);
-  const props = useMemo(() => {
-    return {
-      darkMode,
-      editMode,
-      formState,
-      team,
-      handleChange,
-    };
-  }, [darkMode, team, editMode, activeTab]);
+  // const props = useMemo(() => {
+  //   return {
+  //     darkMode,
+  //     editMode,
+  //     formState,
+  //     team,
+  //     handleChange,
+  //   };
+  // }, [darkMode, team, editMode, activeTab]);
   return <Content {...props} />;
 }
 
@@ -281,6 +275,7 @@ export default function TeamInfo({
   /** @TODO move this to `useTeamForm`? */
   const handleSaveChanges = () => formState && handleEdit(formState);
 
+  console.log("formState", formState);
   /** @TODO add transition to this (and perhaps children) for smooth expanding */
   return (
     <OuterContainer
@@ -311,7 +306,7 @@ export default function TeamInfo({
             text={editMode[activeTab] ? "cancel" : "edit"}
             onClick={handleEditMode}
           />
-          <ContentContainer>
+          <InfoContentContainer>
             <InfoContent
               activeTab={activeTab}
               darkMode={darkMode}
@@ -320,7 +315,7 @@ export default function TeamInfo({
               handleChange={handleFieldChange}
               team={team}
             />
-          </ContentContainer>
+          </InfoContentContainer>
           {editMode[activeTab] && (
             <SaveChangesButton handleSave={handleSaveChanges} />
           )}

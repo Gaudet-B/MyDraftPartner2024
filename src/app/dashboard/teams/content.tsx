@@ -1,25 +1,59 @@
 "use client";
 
+import { PropsWithChildren, useMemo } from "react";
 import { useAtom } from "jotai";
 import { Team } from "@prisma/client";
+import H1 from "@designsystem/typography/H1";
 import { backgroundColors } from "@designsystem/colors";
 import transition from "@designsystem/class-names/transition";
+import ContentContainer from "@designsystem/container/ContentContainer";
 import { NewTeamButton, TeamButtons } from "./_components/TeamButtons";
 import TeamInfo from "./_components/TeamInfo";
 import NewTeamForm from "../../_components/forms/NewTeam";
 import { TeamSettings as TeamSettingsType } from "./_components/TeamInfo/info";
 import useTeamForm, { FormValuesType } from "./hooks/useTeamForm";
 import { useThemeAtom } from "../atoms";
-import H1 from "~/app/_components/design-system/typography/H1";
 
 export type TeamType = {
   settings: TeamSettingsType;
 } & Team;
 
-const scrollbarStyles = {
-  scrollbarWidth: "thin",
-};
+// const scrollbarStyles = {
+//   scrollbarWidth: "thin",
+// };
 
+function ContentArea({
+  children,
+  darkMode,
+}: PropsWithChildren<{ darkMode: boolean }>) {
+  return (
+    <div
+      className={`flex h-full w-full grow flex-col items-center p-6 ${transition.standard} ${darkMode ? backgroundColors.darkSecondary : backgroundColors.lightSecondary}`}
+    >
+      {children}
+    </div>
+  );
+}
+
+function TeamsTitle({ darkMode }: { darkMode: boolean }) {
+  return (
+    <div
+      className={`w-full pt-5 text-center font-aquire ${darkMode ? "text-gray-300" : "text-gray-700"}`}
+    >
+      <H1>My Teams</H1>
+    </div>
+  );
+}
+
+type NewTeamProps = {
+  newTeamFormState?: FormValuesType;
+  showNewTeamSettings: boolean;
+  handleCreate: (team: FormValuesType) => void;
+  handleNewTeamSettingsChange: (settings: FormValuesType["settings"]) => void;
+  handleNewTeamFieldChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleShowSettings: () => void;
+  handleHideSettings: () => void;
+};
 function NewTeam({
   newTeamFormState,
   showNewTeamSettings,
@@ -28,15 +62,7 @@ function NewTeam({
   handleNewTeamFieldChange,
   handleShowSettings,
   handleHideSettings,
-}: {
-  newTeamFormState?: FormValuesType;
-  showNewTeamSettings: boolean;
-  handleCreate: (team: FormValuesType) => void;
-  handleNewTeamSettingsChange: (settings: FormValuesType["settings"]) => void;
-  handleNewTeamFieldChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleShowSettings: () => void;
-  handleHideSettings: () => void;
-}) {
+}: NewTeamProps) {
   return (
     <NewTeamForm
       /** @TODO keep this `isModal` prop or remove??? */
@@ -49,6 +75,28 @@ function NewTeam({
       handleSettingsChange={handleNewTeamSettingsChange}
       handleSubmit={() => newTeamFormState && handleCreate(newTeamFormState)}
     />
+  );
+}
+
+function AddNewTeam({
+  create,
+  showNewTeam,
+  handleShowNewTeam,
+  handleHideNewTeam,
+}: {
+  create: NewTeamProps;
+  showNewTeam: boolean;
+  handleShowNewTeam: () => void;
+  handleHideNewTeam: () => void;
+}) {
+  return (
+    <div className="flex flex-col items-center gap-5">
+      <NewTeamButton
+        addTeam={showNewTeam}
+        handleClick={showNewTeam ? handleHideNewTeam : handleShowNewTeam}
+      />
+      {showNewTeam && <NewTeam {...{ ...create }} />}
+    </div>
   );
 }
 
@@ -76,60 +124,51 @@ export default function TeamsContent() {
     handleActiveTab,
   } = edit;
 
-  const colorClasses =
-    themeAtom === "dark"
-      ? `${backgroundColors.darkAccent}`
-      : `${backgroundColors.lightAccent}`;
+  const Container = useMemo(
+    () => new ContentContainer({ darkMode: themeAtom === "dark" }),
+    [themeAtom],
+  );
 
   /** @TODO clean up all these divs and classes by abstracting to components with children */
   return (
-    <div
-      className={`flex h-full w-full grow flex-col items-center p-6 ${transition.standard} ${themeAtom === "dark" ? backgroundColors.darkSecondary : backgroundColors.lightSecondary}`}
-    >
-      <div
-        className={`z-10 w-full max-w-[900px] rounded-3xl bg-opacity-80 px-[1px] py-3 shadow-lg ${transition.standard} ${colorClasses}`}
-      >
-        <div className="h-[80vh] overflow-auto">
-          <div
-            className={`font-aquire w-full pt-5 text-center ${themeAtom === "dark" ? "text-gray-300" : "text-gray-700"}`}
-          >
-            <H1>My Teams</H1>
-          </div>
-          <div className="flex w-full flex-col items-center p-4">
-            <div className="w-4/5">
-              <TeamButtons
-                teams={teamsList}
-                activeTeam={activeTeam}
-                handleClick={handleActiveTeam}
-                darkMode={themeAtom === "dark"}
-              />
-            </div>
-            <div className="flex w-full justify-center py-2">
+    <ContentArea darkMode={themeAtom === "dark"}>
+      <Container.Wide>
+        <Container.Scrollable>
+          <div className="flex h-full w-full flex-col items-center gap-6">
+            <TeamsTitle darkMode={themeAtom === "dark"} />
+            <TeamButtons
+              teams={teamsList}
+              activeTeam={activeTeam}
+              handleClick={handleActiveTeam}
+              darkMode={themeAtom === "dark"}
+            />
+            <div className="flex w-full flex-col items-center px-4 py-2">
               {team && (
-                <TeamInfo
-                  team={team}
-                  activeTab={activeTab}
-                  editMode={editMode}
-                  handleFieldChange={handleTeamInfoFieldChange}
-                  handleEdit={handleEdit}
-                  handleEditMode={handleEditMode}
-                  handleActiveTab={handleActiveTab}
-                  formState={teamInfoFormState}
+                <div className="flex w-full justify-center pb-6">
+                  <TeamInfo
+                    team={team}
+                    activeTab={activeTab}
+                    editMode={editMode}
+                    handleFieldChange={handleTeamInfoFieldChange}
+                    handleEdit={handleEdit}
+                    handleEditMode={handleEditMode}
+                    handleActiveTab={handleActiveTab}
+                    formState={teamInfoFormState}
+                  />
+                </div>
+              )}
+              {!activeTeam && (
+                <AddNewTeam
+                  create={create}
+                  showNewTeam={showNewTeam}
+                  handleHideNewTeam={handleHideNewTeam}
+                  handleShowNewTeam={handleShowNewTeam}
                 />
               )}
             </div>
-            <div className="flex flex-col items-center gap-5 pt-4">
-              <NewTeamButton
-                addTeam={showNewTeam}
-                handleClick={
-                  showNewTeam ? handleHideNewTeam : handleShowNewTeam
-                }
-              />
-              {showNewTeam && <NewTeam {...{ ...create }} />}
-            </div>
           </div>
-        </div>
-      </div>
-    </div>
+        </Container.Scrollable>
+      </Container.Wide>
+    </ContentArea>
   );
 }

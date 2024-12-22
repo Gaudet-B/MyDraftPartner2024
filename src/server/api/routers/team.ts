@@ -29,7 +29,7 @@ export const teamRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.session?.user.id;
       if (!userId) {
-        /** @TODO best way to handle this potential error? */
+        /** @TODO need better error handling */
         throw new Error("User not found");
       }
       return ctx.db.team.create({
@@ -51,6 +51,40 @@ export const teamRouter = createTRPCRouter({
           numOfTeams: z.number(),
           ppr: z.number(),
           superflex: z.boolean(),
+          roster: z.object({
+            qb: z.object({
+              starters: z.number().optional(),
+              max: z.number().optional(),
+            }),
+            rb: z.object({
+              starters: z.number().optional(),
+              max: z.number().optional(),
+            }),
+            wr: z.object({
+              starters: z.number().optional(),
+              max: z.number().optional(),
+            }),
+            te: z.object({
+              starters: z.number().optional(),
+              max: z.number().optional(),
+            }),
+            flex: z.object({
+              starters: z.number().optional(),
+              max: z.number().optional(),
+            }),
+            dst: z.object({
+              starters: z.number().optional(),
+              max: z.number().optional(),
+            }),
+            k: z.object({
+              starters: z.number().optional(),
+              max: z.number().optional(),
+            }),
+            bench: z.object({
+              starters: z.number().optional(),
+              max: z.number().optional(),
+            }),
+          }),
         }),
         league: z.string(),
       }),

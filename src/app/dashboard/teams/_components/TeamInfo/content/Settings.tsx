@@ -6,6 +6,7 @@ export function Settings({ editMode, formState, handleChange }: ContentProps) {
   const handleSettingsChange = (settings: SettingsValuesType) =>
     handleChange("settings", settings);
 
+  // console.log("formState", formState);
   return (
     <div className="pb-4">
       <TeamSettingsForm

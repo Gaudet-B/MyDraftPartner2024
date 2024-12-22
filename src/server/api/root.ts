@@ -6,7 +6,7 @@ import { userRouter } from "./routers/user";
 import { rankingRouter } from "./routers/ranking";
 
 /**
- * This is the primary router for your server.
+ * This is the primary router.
  *
  * All routers added in /api/routers should be manually added here.
  */

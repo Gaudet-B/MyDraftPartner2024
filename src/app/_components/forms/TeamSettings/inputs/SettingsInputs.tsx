@@ -65,12 +65,13 @@ export function SettingsInputs({
   handleRosterChange: (
     position: keyof Roster,
     startersOrMax: "starters" | "max",
-    value: number,
+    change: -1 | 1,
   ) => void;
   darkMode?: boolean;
   editMode?: boolean;
 }) {
-  const { draftPosition, numOfTeams, ppr, superflex } = values;
+  const { draftPosition, numOfTeams, ppr, roster, superflex } = values;
+  // console.log("roster", roster);
 
   const [possibleDraftPositions, setPossibleDraftPositions] = useState<
     Array<number>
@@ -212,17 +213,17 @@ export function SettingsInputs({
         <SettingsGroup
           label={"roster"}
           form={`roster`}
-          editMode={editMode}
+          // editMode={editMode}
           darkMode={darkMode}
+          editMode
         >
-          <div className="col-span-2">
+          <div className={editMode ? "col-span-2" : "col-span-1"}>
             <RosterDetails
-              // rosterDetails={teamSettings.roster}
-              rosterDetails={values.roster}
-              handleNumberChange={handleRosterChange}
-              items={ROSTER_OPTIONS}
-              // items={ROSTER_OPTIONS as Array<keyof Roster>}
+              darkMode={darkMode}
               editMode={editMode}
+              items={ROSTER_OPTIONS}
+              rosterDetails={roster}
+              handleNumberChange={handleRosterChange}
             />
           </div>
         </SettingsGroup>

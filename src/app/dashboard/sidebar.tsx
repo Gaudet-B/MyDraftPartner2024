@@ -6,7 +6,6 @@ import Link from "next/link";
 import { Button as HeadlessBtn } from "@headlessui/react";
 import { useAtom } from "jotai";
 import { useThemeAtom } from "./atoms";
-// import Navigation from "@components/navigation/navigation";
 import {
   backgroundColors,
   borderColors,
@@ -60,7 +59,7 @@ const BUTTON_MAP = {
   SETTINGS: SettingsIcon,
 } as const;
 
-function ButtonContainer({
+function ButtonWrapper({
   children,
   text,
 }: PropsWithChildren<{ text: keyof typeof BUTTON_MAP }>) {
@@ -73,8 +72,7 @@ function ButtonContainer({
   );
 }
 
-/** @TODO change name of this component */
-function Button({
+function ButtonContainer({
   children,
   expand,
   display,
@@ -103,9 +101,6 @@ function ButtonImage({
   const SVGIcon = BUTTON_MAP[button];
   return (
     <div
-      // src={BUTTON_MAP[button]}
-      // height={35}
-      // width={35}
       className={`h-10 w-10`}
       style={darkMode ? { filter: "invert(100%)" } : {}}
     >
@@ -141,17 +136,16 @@ function SidebarButton({
     path.length - 1
   ]?.toUpperCase() as keyof typeof BUTTON_MAP;
   return (
-    <ButtonContainer text={text}>
-      <Button
+    <ButtonWrapper text={text}>
+      <ButtonContainer
         darkMode={darkMode}
         display={text === displayContent}
         expand={expand}
       >
         <ButtonImage button={text} darkMode={darkMode} />
-        {/* <ButtonText>{show ? text : null}</ButtonText> */}
         <ButtonText expand={expand}>{text}</ButtonText>
-      </Button>
-    </ButtonContainer>
+      </ButtonContainer>
+    </ButtonWrapper>
   );
 }
 
@@ -217,12 +211,6 @@ export function DashboardSidebar() {
         ) : (
           <div className="h-6 w-6 opacity-0" />
         )}
-        {/* <Navigation
-        expand={expand}
-        handleExpandMenu={handleExpandMenu}
-        darkMode={darkMode}
-      /> */}
-        {/* <SidebarContainer darkMode={darkMode} expand={expand}> */}
         <ButtonsContainer>
           {buttons.map((button) => {
             return (
