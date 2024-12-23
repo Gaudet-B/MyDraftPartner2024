@@ -7,16 +7,15 @@ import {
   TitleContainer,
   FormWrapper,
 } from "./content";
-import TeamSettingsForm from "~/app/_components/forms/TeamSettings/TeamSettingsForm";
+import TeamSettingsForm from "@components/forms/TeamSettings/TeamSettingsForm";
 import {
   FormContainer,
   FormLabel,
   FormTitle,
 } from "@components/forms/form-components";
-import { FormInput } from "~/app/_components/forms/form-inputs";
-import { backgroundColors } from "../../design-system/colors";
-import { useThemeAtom } from "~/app/dashboard/atoms";
-import { textColors } from "../../design-system/colors/text";
+import { FormInput } from "@components/forms/form-inputs";
+import { backgroundColors, textColors } from "@designsystem/colors";
+import useThemeAtom from "@designsystem/theme/atoms/useThemeAtom";
 import {
   FormValuesType,
   SettingsValuesType,

@@ -8,8 +8,8 @@ import { PropsWithChildren, useState } from "react";
 import {
   backgroundColors,
   borderColors,
-} from "~/app/_components/design-system/colors";
-import { textColors } from "~/app/_components/design-system/colors/text";
+  textColors,
+} from "@designsystem/colors";
 
 type ToggleKey = "all" | Position;
 export type MaxToggle = {

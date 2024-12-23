@@ -1,6 +1,6 @@
 import { PropsWithChildren } from "react";
 import { useAtom } from "jotai";
-import { useThemeAtom } from "~/app/dashboard/atoms";
+import useThemeAtom from "@designsystem/theme/atoms/useThemeAtom";
 
 function SVG({ children }: PropsWithChildren) {
   return (
@@ -14,15 +14,15 @@ function Background({ fill = "white" }: { fill?: "white" | "black" }) {
   return <path d="M 0 0 H 110 V 110 H 0 Z" fill={fill} />;
 }
 
-function OuterCircle({ fill = "white" }: { fill?: "white" | "black" }) {
-  const stroke = fill === "white" ? "black" : "white";
+function OuterCircle({ stroke = "white" }: { stroke?: "white" | "black" }) {
+  // const stroke = fill === "white" ? "black" : "white";
   return (
     <g id="outer-circle">
       <circle
         cx="55"
         cy="55"
         r="50"
-        fill={fill}
+        fill="none"
         stroke={stroke}
         strokeWidth="6"
       />
@@ -93,8 +93,7 @@ export function UserIcon({ isBaller = false }: { isBaller?: boolean }) {
 
   return (
     <SVG>
-      {/* <Background fill={bg} /> */}
-      <OuterCircle fill={bg} />
+      <OuterCircle stroke={color} />
       <Body isInHelmet={isBaller} stroke={color} />
       <Head isInHelmet={isBaller} fill={color} stroke={bg} />
       {isBaller && <Helmet fill={color} />}

@@ -1,7 +1,7 @@
 import { PropsWithChildren, useState } from "react";
 import { Switch } from "@headlessui/react";
 import { useAtom } from "jotai";
-import { useThemeAtom } from "~/app/dashboard/atoms";
+import useThemeAtom from "@designsystem/theme/atoms/useThemeAtom";
 
 function SwitchWrapper({
   handleChange,
@@ -72,7 +72,6 @@ export default function ThemeToggle() {
     <SwitchWrapper handleChange={handleChange}>
       <Switch
         defaultChecked={enabled}
-        // onChange={handleChange}
         className={`relative z-10 inline-flex h-6 w-11 items-center rounded-full border border-gray-500 ${enabled ? "bg-black" : "bg-white"} hover:border-gray-800 focus:border-gray-800 focus:outline-none`}
         style={{
           boxShadow: `rgb(${

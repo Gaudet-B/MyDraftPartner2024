@@ -1,6 +1,6 @@
 import { useAtom } from "jotai";
 import { PropsWithChildren } from "react";
-import { useThemeAtom } from "~/app/dashboard/atoms";
+import useThemeAtom from "@designsystem/theme/atoms/useThemeAtom";
 import transition from "../class-names/transition";
 
 function SVG({ children }: PropsWithChildren) {

@@ -3,12 +3,15 @@
 import { PropsWithChildren, useMemo, useState } from "react";
 import { useAtom } from "jotai";
 import Button from "@designsystem/button";
-import { backgroundColors, borderColors } from "@designsystem/colors";
-import { useThemeAtom } from "~/app/dashboard/atoms";
+import transition from "@designsystem/class-names/transition";
+import useThemeAtom from "@designsystem/theme/atoms/useThemeAtom";
+import {
+  backgroundColors,
+  borderColors,
+  textColors,
+} from "@designsystem/colors";
 import { NameAndLeague, Notes, Ranks, Settings } from "./content";
 import { TeamType } from "../../content";
-import { textColors } from "~/app/_components/design-system/colors/text";
-import transition from "~/app/_components/design-system/class-names/transition";
 import {
   ContentTab,
   EditMode,

@@ -17,9 +17,9 @@ import {
   FormInput,
   FormRadioGroup,
 } from "@designsystem/form/inputs";
-import H1 from "@designsystem/typography/H1";
+import H1 from "~/app/_components/design-system/typography/header";
 import { useAtom } from "jotai";
-import { useThemeAtom } from "../dashboard/atoms";
+import useThemeAtom from "@designsystem/theme/atoms/useThemeAtom";
 
 const THEME_OPTIONS = ["light", "dark"];
 
@@ -87,8 +87,11 @@ export default function AccountSettings({ user }: { user?: AccountSettings }) {
             <div
               className={`flex w-full items-start justify-start gap-12 pl-4 ${themeAtom === "dark" ? "text-gray-50" : ""}`}
             >
-              <FormLabel light>theme</FormLabel>
+              <FormLabel htmlFor="theme" light>
+                theme
+              </FormLabel>
               <FormRadioGroup
+                htmlFor={"theme"}
                 items={THEME_OPTIONS}
                 value={formValues.darkMode ? "dark" : "light"}
                 handleChange={handleRadioChange}

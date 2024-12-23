@@ -6,7 +6,7 @@ import {
   PPR_OPTIONS,
   ROSTER_OPTIONS,
   SUPERFLEX_OPTIONS,
-} from "~/app/_components/forms/TeamSettings/const";
+} from "@components/forms/TeamSettings/const";
 import RosterDetails from "./RosterDetails";
 import { SettingsValuesType } from "~/app/dashboard/teams/hooks/useTeamForm";
 import { getPossibleDraftPositions } from "~/app/dashboard/teams/util";

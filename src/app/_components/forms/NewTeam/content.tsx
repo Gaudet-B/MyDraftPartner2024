@@ -3,7 +3,7 @@
 import { PropsWithChildren } from "react";
 import Button from "@designsystem/button";
 import transition from "@designsystem/class-names/transition";
-import { textColors } from "../../design-system/colors/text";
+import { textColors } from "@designsystem/colors";
 
 function FormButtonContainer({
   children,

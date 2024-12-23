@@ -50,12 +50,7 @@ function WideContainer({
   );
 }
 
-interface ContainerProps {
-  children: React.ReactNode;
-  // darkMode: boolean;
-}
 interface ContentContainerProps {
-  // children: React.ReactNode;
   darkMode: boolean;
 }
 export default class ContentContainer extends Component<ContentContainerProps> {

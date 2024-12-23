@@ -2,11 +2,10 @@
 
 import { PropsWithChildren } from "react";
 import { Team } from "@prisma/client";
-import { ContentProps, TeamSettings } from "../info";
-import { backgroundColors } from "~/app/_components/design-system/colors";
 import { useAtom } from "jotai";
-import { useThemeAtom } from "~/app/dashboard/atoms";
-import { textColors } from "~/app/_components/design-system/colors/text";
+import { backgroundColors, textColors } from "@designsystem/colors";
+import useThemeAtom from "@designsystem/theme/atoms/useThemeAtom";
+import { ContentProps, TeamSettings } from "../info";
 
 function InfoGrid({ children }: PropsWithChildren) {
   return <div className="grid grid-cols-3 gap-2">{children}</div>;

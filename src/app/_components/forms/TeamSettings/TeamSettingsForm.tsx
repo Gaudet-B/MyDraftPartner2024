@@ -1,7 +1,7 @@
 "use client";
 
 import { useAtom } from "jotai";
-import { useThemeAtom } from "~/app/dashboard/atoms";
+import useThemeAtom from "@designsystem/theme/atoms/useThemeAtom";
 import { Roster } from "~/app/dashboard/teams/_components/TeamInfo/info";
 import { SettingsInputs } from "./inputs/SettingsInputs";
 import { getPossibleDraftPositions } from "~/app/dashboard/teams/util";

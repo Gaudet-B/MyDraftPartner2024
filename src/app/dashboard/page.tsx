@@ -1,5 +1,6 @@
 import { HydrateClient } from "~/trpc/server";
 import { getServerAuthSession } from "~/server/auth";
+import ContentArea from "@designsystem/container/ContentArea";
 import DashBoardContent from "./content";
 
 export default async function Dashboard() {
@@ -8,7 +9,9 @@ export default async function Dashboard() {
 
   return (
     <HydrateClient>
-      <DashBoardContent hasDarkMode={!!hasDarkMode} />
+      <ContentArea hasDarkMode={!!hasDarkMode}>
+        <DashBoardContent hasDarkMode={!!hasDarkMode} />
+      </ContentArea>
     </HydrateClient>
   );
 }

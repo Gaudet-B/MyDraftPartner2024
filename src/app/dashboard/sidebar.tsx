@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { Button as HeadlessBtn } from "@headlessui/react";
 import { useAtom } from "jotai";
-import { useThemeAtom } from "./atoms";
+import useThemeAtom from "@designsystem/theme/atoms/useThemeAtom";
 import {
   backgroundColors,
   borderColors,
@@ -19,6 +19,17 @@ import {
   SettingsIcon,
   UsersIcon,
 } from "@designsystem/icons";
+
+export const BUTTON_MAP = {
+  RECOMMENDATIONS: RobotIcon,
+  TEAMS: UsersIcon,
+  ANALYSIS: LineGoUpIcon,
+  SETTINGS: SettingsIcon,
+} as const;
+
+export const BUTTONS = Object.keys(BUTTON_MAP) as Array<
+  keyof typeof BUTTON_MAP
+>;
 
 function ExpandMenuButton({
   expand,
@@ -50,14 +61,6 @@ function ExpandMenuButton({
     </HeadlessBtn>
   );
 }
-
-/** @TODO ADD CONTENT HERE */
-const BUTTON_MAP = {
-  RECOMMENDATIONS: RobotIcon,
-  TEAMS: UsersIcon,
-  ANALYSIS: LineGoUpIcon,
-  SETTINGS: SettingsIcon,
-} as const;
 
 function ButtonWrapper({
   children,
@@ -190,8 +193,6 @@ export function DashboardSidebar() {
   const [themeAtom] = useAtom(useThemeAtom);
   const darkMode = themeAtom === "dark";
 
-  const buttons = Object.keys(BUTTON_MAP) as (keyof typeof BUTTON_MAP)[];
-
   const handleExpandMenu = (status: "expand" | "contract") => {
     const newStatus = status === "expand" ? "contract" : "expand";
     setExpand(newStatus);
@@ -212,9 +213,10 @@ export function DashboardSidebar() {
           <div className="h-6 w-6 opacity-0" />
         )}
         <ButtonsContainer>
-          {buttons.map((button) => {
+          {BUTTONS.map((button, idx) => {
             return (
               <SidebarButton
+                key={`sidebar-button-${idx}-${button}`}
                 darkMode={darkMode}
                 text={button}
                 expand={expand === "expand"}

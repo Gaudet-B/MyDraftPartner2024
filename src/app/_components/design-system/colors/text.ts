@@ -1,5 +1,3 @@
-import { off } from "process";
-
 export const textColors = {
   black: "text-black",
   white: "text-white",

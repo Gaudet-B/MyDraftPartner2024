@@ -1,7 +1,7 @@
 import { PropsWithChildren } from "react";
 import { Team } from "@prisma/client";
 import Button from "@designsystem/button";
-import { textColors } from "~/app/_components/design-system/colors/text";
+import { textColors } from "@designsystem/colors";
 
 function ButtonsContainer({ children }: PropsWithChildren) {
   return (

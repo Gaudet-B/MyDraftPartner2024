@@ -4,7 +4,7 @@ import {
   TeamSettings as TeamSettingsType,
 } from "./_components/TeamInfo";
 import { SettingsValuesType } from "./hooks/useTeamForm";
-import { DEFAULT_ROSTER_SETTINGS } from "~/app/_components/forms/TeamSettings/const";
+import { DEFAULT_ROSTER_SETTINGS } from "@components/forms/TeamSettings/const";
 
 // const DEFAULT_TEAM_SETTINGS = {
 //   draftPosition: 1,

@@ -4,16 +4,13 @@ import { PropsWithChildren, useEffect, useMemo, useRef, useState } from "react";
 import * as d3 from "d3";
 import { zoom } from "d3";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useAtom } from "jotai";
 import { signIn } from "next-auth/react";
-// import { getServerAuthSession } from "~/server/auth";
-// import { useSession } from "next-auth/react";
-import transition from "@designsystem/class-names/transition";
+import useThemeAtom from "@designsystem/theme/atoms/useThemeAtom";
+import { backgroundColors } from "@designsystem/colors";
 import { BgSvgBuilder } from "./SvgBuilder";
 import { getDimensions } from "./dimensions";
-import { useRouter } from "next/navigation";
-import { useThemeAtom } from "~/app/dashboard/atoms";
-import { backgroundColors } from "../design-system/colors";
 
 function MenuLink({
   children,
@@ -48,7 +45,7 @@ function Logo({ isOpen }: { isOpen: boolean }) {
           // fill="white"
           // stroke={"#00FFCC"}
           strokeWidth={2}
-          className="font-aquire stroke-[#00ffea]"
+          className="stroke-[#00ffea] font-aquire"
         >
           {/* <path d="M10,70 L10,10 L30,10 L30,60 L50,60 L50,10 L70,10 L70,70 Z" />
         <path d="M80,70 L80,10 L100,10 L120,40 L100,70 Z" />
