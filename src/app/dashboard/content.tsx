@@ -117,28 +117,30 @@ function DashboardLink({
   const isShorter = txt === "SETTINGS" || txt === "RECOMMENDATIONS";
   const dimensions = isShorter ? { h: 140, w: 140 } : { h: 152, w: 152 };
 
+  console.log("dimensions", dimensions);
+  console.log("Link", Link);
+
   return (
-    // <div
-    //   className={`group flex h-60 w-60 cursor-pointer flex-col items-center justify-between gap-2 rounded-xl border-2 p-3 pt-4 ${darkMode ? `${borderColors.darkSecondary} ${backgroundColors.lightAccent}` : `${borderColors.lightSecondary} ${backgroundColors.darkAccent}`}`}
-    // >
-    <Link
-      href={`/dashboard/${txt.toLowerCase()}`}
-      className={`group flex h-60 w-60 cursor-pointer flex-col items-center justify-between rounded-xl border-2 p-3 pt-4 opacity-80 transition-all duration-500 ease-in hover:opacity-100 ${darkMode ? `${borderColors.darkSecondary} ${backgroundColors.lightAccent} ${backgroundColors.hover.light}` : `${borderColors.lightSecondary} ${backgroundColors.darkAccent} ${backgroundColors.hover.darkTertiary}`} ${isRateMyTeam ? "gap-2" : ""}`}
-    >
-      <div
-        className="flex h-44 w-44 items-center justify-center"
-        style={isInverted ? { filter: "invert(100%)" } : {}}
+    /** @TODO next/link is hard to query when running tests, find a better solution than this button wrapper (maybe an "id"?) */
+    <button>
+      <Link
+        // aria-roledescription="link"
+        href={`/dashboard/${txt.toLowerCase()}`}
+        className={`group flex h-60 w-60 cursor-pointer flex-col items-center justify-between rounded-xl border-2 p-3 pt-4 opacity-80 transition-all duration-500 ease-in hover:opacity-100 ${darkMode ? `${borderColors.darkSecondary} ${backgroundColors.lightAccent} ${backgroundColors.hover.light}` : `${borderColors.lightSecondary} ${backgroundColors.darkAccent} ${backgroundColors.hover.darkTertiary}`} ${isRateMyTeam ? "gap-2" : ""}`}
       >
-        {/** @TODO "settings" and "reccomendations" need to be SHORTER */}
-        <Icon dimensions={dimensions} />
-      </div>
-      <div className="h-10 text-wrap font-sans text-xl leading-5 opacity-0 transition-opacity duration-500 ease-in group-hover:opacity-100">
-        <span className={darkMode ? textColors.dark : textColors.light}>
-          {text}
-        </span>
-      </div>
-    </Link>
-    // </div>
+        <div
+          className="flex h-44 w-44 items-center justify-center"
+          style={isInverted ? { filter: "invert(100%)" } : {}}
+        >
+          <Icon dimensions={dimensions} />
+        </div>
+        <div className="h-10 text-wrap font-sans text-xl leading-5 opacity-0 transition-opacity duration-500 ease-in group-hover:opacity-100">
+          <span className={darkMode ? textColors.dark : textColors.light}>
+            {text}
+          </span>
+        </div>
+      </Link>
+    </button>
   );
 }
 

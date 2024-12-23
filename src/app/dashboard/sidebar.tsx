@@ -47,6 +47,7 @@ function ExpandMenuButton({
     >
       {expand === "expand" ? (
         <img
+          data-testid="hamburger-icon"
           src={"https://cdn-icons-png.flaticon.com/512/2458/2458523.png"}
           height={40}
           width={40}
@@ -54,7 +55,7 @@ function ExpandMenuButton({
           style={darkMode ? { filter: "invert(100%)" } : {}}
         />
       ) : (
-        <div className="h-10 w-10">
+        <div className="h-10 w-10" data-testid="hamburger-icon">
           <HamburgerIcon />
         </div>
       )}
