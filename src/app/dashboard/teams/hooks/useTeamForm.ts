@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { Player, Prisma, Team } from "@prisma/client";
 import { api } from "~/trpc/react";
-import { Roster as RosterType } from "../../../dashboard/teams/_components/TeamInfo/info";
+import { Roster as RosterType } from "../_components/TeamInfo/info";
 import {
   CONTENT_MAP,
   TeamSettings as TeamSettingsType,
@@ -189,13 +189,6 @@ export default function useTeamForm() {
     }
   };
 
-  // const handleSettingsChange = (settings: TeamSettingsType) => {
-  //   if (activeTeam) {
-  //     const newTeam = data?.find((t) => t.id === activeTeam) as TeamType;
-  //     handleEdit({ ...newTeam, settings });
-  //   }
-  // };
-
   /** @TODO this needs work... maybe? */
   const handleNewTeamFieldChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e?.preventDefault?.();
@@ -209,11 +202,9 @@ export default function useTeamForm() {
     field: keyof FormValuesType,
     value: FormValuesType[typeof field],
   ) => {
-    const newState = teamInfoFormState
-      ? { ...teamInfoFormState }
-      : ({} as FormValuesType);
-
-    setTeamInfoFormState({ ...newState, [field]: value });
+    const newState = teamInfoFormState ?? ({} as FormValuesType);
+    const newValues = { ...newState, [field]: value };
+    setTeamInfoFormState(newValues);
   };
 
   const team = useMemo(() => {

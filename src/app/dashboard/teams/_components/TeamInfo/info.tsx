@@ -278,7 +278,6 @@ export default function TeamInfo({
   /** @TODO move this to `useTeamForm`? */
   const handleSaveChanges = () => formState && handleEdit(formState);
 
-  console.log("formState", formState);
   /** @TODO add transition to this (and perhaps children) for smooth expanding */
   return (
     <OuterContainer

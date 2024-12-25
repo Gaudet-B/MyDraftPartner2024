@@ -5,6 +5,8 @@ import { useAtom } from "jotai";
 import useThemeAtom from "@designsystem/theme/atoms/useThemeAtom";
 import ContentContainer from "@designsystem/container/ContentContainer";
 import { H1, H2, H3 } from "~/app/_components/design-system/typography/header";
+import TeamSettingsForm from "~/app/_components/forms/TeamSettings/TeamSettingsForm";
+import useRecommendationForm from "./hooks/useRecommendationForm";
 
 function RecsTitle({ darkMode }: { darkMode: boolean }) {
   return (
@@ -27,6 +29,7 @@ export default function RecommendationsContent({
   hasDarkMode: boolean;
 }) {
   const [themeAtom] = useAtom(useThemeAtom);
+  const { formState, handleFormChange } = useRecommendationForm();
 
   const Container = useMemo(
     () => new ContentContainer({ darkMode: themeAtom === "dark" }),
@@ -38,6 +41,13 @@ export default function RecommendationsContent({
       <Container.Scrollable>
         <div className="flex h-full w-full flex-col items-center gap-6">
           <RecsTitle darkMode={themeAtom === "dark"} />
+        </div>
+        <div className="pb-4">
+          <TeamSettingsForm
+            editMode
+            teamSettings={formState}
+            handleSettingsChange={handleFormChange}
+          />
         </div>
       </Container.Scrollable>
     </Container.Wide>
