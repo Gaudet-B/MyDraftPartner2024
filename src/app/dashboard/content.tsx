@@ -154,6 +154,7 @@ export default function DashBoardContent({
   hasDarkMode: boolean;
 }) {
   const [themeAtom, setThemeAtom] = useAtom(useThemeAtom);
+  // sync theme with user settings from server
   useThemeEffect(hasDarkMode, themeAtom, setThemeAtom);
 
   const Container = useMemo(

@@ -7,7 +7,8 @@ import {
   Label,
   Legend,
 } from "@headlessui/react";
-import Button, { ButtonTheme } from "@designsystem/button";
+import Button from "@designsystem/button";
+import { ButtonTheme } from "@designsystem/button/themes";
 
 export function FormContainer({ children }: PropsWithChildren) {
   return <div className="flex flex-col gap-5">{children}</div>;
@@ -93,30 +94,44 @@ export function FormSeparator() {
 
 export function FormButton({
   children,
+  disabled = false,
   theme = "submit",
-}: PropsWithChildren<{ theme?: ButtonTheme }>) {
-  return <Button theme={theme}>{children}</Button>;
+}: PropsWithChildren<{ disabled?: boolean; theme?: ButtonTheme }>) {
+  return (
+    <Button disabled={disabled} theme={theme}>
+      {children}
+    </Button>
+  );
 }
 
 export function FormSubmit({
   text,
   withCancel,
   darkMode = false,
+  disabled = false,
+  orientation = "end",
 }: {
   text: string;
-  darkMode: boolean;
   withCancel?: boolean;
+  darkMode?: boolean;
+  disabled?: boolean;
+  orientation?: "center" | "end" | "start";
 }) {
+  const justify =
+    orientation === "center"
+      ? "justify-center"
+      : orientation === "start"
+        ? "justify-start"
+        : "justify-end";
+
   return (
-    <div className="flex w-full justify-end gap-2 p-1">
+    <div className={`flex w-full ${justify} gap-2 p-1`}>
       {withCancel && (
         <FormButton theme={darkMode ? "cancel" : "cancel-light"}>
           Cancel
         </FormButton>
       )}
-      <FormButton theme={darkMode ? "submit" : "submit-light"}>
-        {text}
-      </FormButton>
+      <FormButton disabled={disabled}>{text}</FormButton>
     </div>
   );
 }

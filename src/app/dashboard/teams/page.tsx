@@ -1,3 +1,5 @@
+import { ErrorBoundary } from "~/app/_components/ErrorBoundary";
+import TeamsErrorFallback from "./_components/TeamsErrorFallback";
 import { HydrateClient } from "~/trpc/server";
 import { getServerAuthSession } from "~/server/auth";
 import ContentArea from "@designsystem/container/ContentArea";
@@ -8,10 +10,12 @@ export default async function Teams() {
   const hasDarkMode = session?.user.darkMode;
 
   return (
-    <HydrateClient>
-      <ContentArea hasDarkMode={!!hasDarkMode}>
-        <TeamsContent hasDarkMode={!!hasDarkMode} />
-      </ContentArea>
-    </HydrateClient>
+    <ErrorBoundary fallback={<TeamsErrorFallback />}>
+      <HydrateClient>
+        <ContentArea hasDarkMode={!!hasDarkMode}>
+          <TeamsContent hasDarkMode={!!hasDarkMode} />
+        </ContentArea>
+      </HydrateClient>
+    </ErrorBoundary>
   );
 }

@@ -279,7 +279,7 @@ function MaxCell({
             category={"max"}
           />
         ) : (
-          <div />
+          <div className="w-5" />
         )}
         <CellValue
           editMode={editMode}
@@ -300,7 +300,7 @@ function MaxCell({
             category={"max"}
           />
         ) : (
-          <div />
+          <div className="w-5" />
         )}
         {editMode && (
           <Checkbox

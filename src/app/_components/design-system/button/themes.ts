@@ -26,6 +26,7 @@ const BUTTON_THEMES = {
     light: "rounded-full py-1 px-3 hover:bg-gray-400 hover:text-white",
     dark: "rounded-full py-1 px-3 hover:bg-gray-400 hover:text-white",
   },
+  /** @note the "submit" themes do not change based on dark mode, use "submit-light" or "submit-secondary" if needed */
   submit: {
     light:
       "text-white font-semibold border border-gray-300 bg-sky-900 hover:bg-sky-700 px-2 py-2",
@@ -39,6 +40,7 @@ const BUTTON_THEMES = {
     light: "text-white bg-sky-400 hover:bg-sky-500 px-3 py-2",
     dark: "text-white bg-sky-600 hover:bg-sky-500 px-3 py-2",
   },
+  /** @note the "cancel" themes do not change based on dark mode, use "cancel-light" if needed */
   cancel: {
     light:
       "text-gray-100 bg-red-900 hover:bg-red-700 font-semibold border border-gray-300",
@@ -48,6 +50,7 @@ const BUTTON_THEMES = {
     light: "text-white bg-red-500 hover:bg-red-600 border border-gray-200",
     dark: "text-white bg-red-500 hover:bg-red-600 border border-gray-200",
   },
+  /** @TODO change this to "wrapper" */
   /** use 'transparent' when <Button> is a wrapper around child components */
   transparent: {
     light: "",
@@ -56,6 +59,11 @@ const BUTTON_THEMES = {
   "transparent-hover": {
     light: "hover:bg-sky-100 hover:text-sky-900",
     dark: "hover:bg-sky-900 hover:text-sky-100",
+  },
+  /** @note the "disabled" theme is not intended to be used directly, it is meant to override some classes when the button is disabled */
+  disabled: {
+    light: "!bg-zinc-400 !text-zinc-100 !cursor-not-allowed",
+    dark: "!bg-zinc-600 !text-zinc-300 !cursor-not-allowed",
   },
   // primary: {
   //   light: 'bg-blue-500 text-white',

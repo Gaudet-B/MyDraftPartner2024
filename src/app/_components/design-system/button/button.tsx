@@ -26,7 +26,8 @@ export default function Button({
   theme?: keyof typeof BUTTON_THEMES;
 }>) {
   const [themeAtom] = useAtom(useThemeAtom);
-  const buttonClasses = BUTTON_THEMES[buttonTheme][themeAtom];
+  const themeClasses = BUTTON_THEMES[buttonTheme][themeAtom ?? "light"];
+  const buttonClasses = `${themeClasses} ${disabled ? BUTTON_THEMES["disabled"][themeAtom ?? "light"] : ""} ${additionalClasses ? additionalClasses : ""}`;
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -35,7 +36,7 @@ export default function Button({
 
   return (
     <HeadlessBtn
-      className={`cursor-pointer rounded-xl px-2 py-1 ${underline ? "underline" : ""} ${bold ? "font-semibold" : ""} ${buttonClasses} ${additionalClasses}`}
+      className={`cursor-pointer rounded-xl px-2 py-1 ${underline ? "underline" : ""} ${bold ? "font-semibold" : ""} ${buttonClasses}`}
       disabled={disabled}
       onClick={(e) => handleClick(e)}
     >
