@@ -17,7 +17,7 @@ import {
   FormInput,
   FormRadioGroup,
 } from "@designsystem/form/inputs";
-import H1 from "~/app/_components/design-system/typography/header";
+import { H1 } from "~/app/_components/design-system/typography/header";
 import { useAtom } from "jotai";
 import useThemeAtom from "@designsystem/theme/atoms/useThemeAtom";
 
@@ -105,6 +105,8 @@ export default function AccountSettings({ user }: { user?: AccountSettings }) {
           <FormSubmit
             text={"Save Changes"}
             darkMode={themeAtom === "dark"}
+            /** @TODO add real click handler that makes api call */
+            onClick={() => console.log("clicked submit")}
             withCancel
           />
         </FormContainer>

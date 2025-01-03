@@ -80,14 +80,14 @@ model Player {
   name           String
   team           String
   position       String
-  ecr            String
+  ecr            Float
   positionalRank String
   fProsId        Int
-  consistencyT1  String?
-  consistencyT2  String?
+  consistencyT1  Float?
+  consistencyT2  Float?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
-  currentAdp     String
+  currentAdp     Float
 
   @@unique([id, fProsId])
   @@index([name])

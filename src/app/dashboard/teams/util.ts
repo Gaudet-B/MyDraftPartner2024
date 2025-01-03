@@ -116,10 +116,13 @@ export const parseStartersFromRoster = (
   ) as Array<keyof RosterType>;
 
   for (const position of positions) {
+    if (position === "bench") continue;
+
     starters[position] = [];
     const p = rosterSettings[position];
-    const { starters: s } = p;
-    if (!p || !s) continue;
+
+    if (!p || !p.starters) continue;
+    const s = p.starters;
 
     while (starters[position].length < s) {
       const positionToFind = position.toUpperCase();

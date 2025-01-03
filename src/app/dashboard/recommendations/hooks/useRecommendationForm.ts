@@ -1,3 +1,5 @@
+"use client";
+
 import { useMemo, useState } from "react";
 import { Prisma, Team } from "@prisma/client";
 import { DEFAULT_ROSTER_SETTINGS } from "@components/forms/TeamSettings/const";
@@ -15,8 +17,8 @@ export type RecsFormValues = {
 const DEFAULT_FORM_STATE = {
   ppr: "1.0",
   superflex: "NO",
-  draftPosition: 0,
-  numOfTeams: 0,
+  draftPosition: 10,
+  numOfTeams: 12,
   roster: DEFAULT_ROSTER_SETTINGS,
 } as const;
 

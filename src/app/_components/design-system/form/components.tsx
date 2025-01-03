@@ -94,11 +94,16 @@ export function FormSeparator() {
 
 export function FormButton({
   children,
+  onClick,
   disabled = false,
   theme = "submit",
-}: PropsWithChildren<{ disabled?: boolean; theme?: ButtonTheme }>) {
+}: PropsWithChildren<{
+  onClick: () => void;
+  disabled?: boolean;
+  theme?: ButtonTheme;
+}>) {
   return (
-    <Button disabled={disabled} theme={theme}>
+    <Button disabled={disabled} theme={theme} onClick={onClick}>
       {children}
     </Button>
   );
@@ -106,12 +111,14 @@ export function FormButton({
 
 export function FormSubmit({
   text,
+  onClick,
   withCancel,
   darkMode = false,
   disabled = false,
   orientation = "end",
 }: {
   text: string;
+  onClick: () => void;
   withCancel?: boolean;
   darkMode?: boolean;
   disabled?: boolean;
@@ -127,11 +134,16 @@ export function FormSubmit({
   return (
     <div className={`flex w-full ${justify} gap-2 p-1`}>
       {withCancel && (
-        <FormButton theme={darkMode ? "cancel" : "cancel-light"}>
+        <FormButton
+          onClick={onClick}
+          theme={darkMode ? "cancel" : "cancel-light"}
+        >
           Cancel
         </FormButton>
       )}
-      <FormButton disabled={disabled}>{text}</FormButton>
+      <FormButton onClick={onClick} disabled={disabled}>
+        {text}
+      </FormButton>
     </div>
   );
 }

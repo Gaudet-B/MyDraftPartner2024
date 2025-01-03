@@ -1,11 +1,12 @@
 "use client";
 
-import { PropsWithChildren, useMemo } from "react";
+import { PropsWithChildren, useMemo, useState } from "react";
 import { useAtom } from "jotai";
 import { Team } from "@prisma/client";
-import { backgroundColors, textColors } from "@designsystem/colors";
+import Button from "@designsystem/button";
 import { H1, H3 } from "@designsystem/typography/header";
 import { FormSubmit } from "@designsystem/form/components";
+import { backgroundColors, textColors } from "@designsystem/colors";
 import useThemeAtom from "@designsystem/theme/atoms/useThemeAtom";
 import useThemeEffect from "@designsystem/theme/hooks/useThemeEffect";
 import ContentContainer from "@designsystem/container/ContentContainer";
@@ -13,7 +14,8 @@ import TeamSettingsForm from "@components/forms/TeamSettings/TeamSettingsForm";
 import useRecommendationForm, {
   RecsFormValues,
 } from "./hooks/useRecommendationForm";
-import Button from "~/app/_components/design-system/button";
+import useRecommendationsQuery from "./hooks/useRecommendationsQuery";
+import { ProjectedRoster, RecsRoundByRound, RecsSummary } from "./results";
 
 function RecsTitle({ darkMode }: { darkMode: boolean }) {
   return (
@@ -45,10 +47,12 @@ function RecsSettingsRow({ children }: PropsWithChildren) {
 function SettingsInputsSection({
   darkMode,
   formState,
+  handleShowRecommendations,
   handleFormChange,
 }: {
   darkMode: boolean;
   formState: RecsFormValues;
+  handleShowRecommendations: () => void;
   handleFormChange: (values: RecsFormValues) => void;
 }) {
   return (
@@ -75,6 +79,7 @@ function SettingsInputsSection({
         text="Get Recommendations"
         darkMode={darkMode}
         orientation="center"
+        onClick={handleShowRecommendations}
         /** @TODO need a tooltip that explains this */
         // disable button when form is incomplete
         // AKA numOfTeams or draftPosition are equal to their initial values of 0
@@ -133,6 +138,32 @@ function TeamSettingsList({
   );
 }
 
+function PlayerRecommendations({
+  darkMode,
+  formState,
+}: {
+  darkMode: boolean;
+  formState: RecsFormValues;
+}) {
+  const { recommendations } = useRecommendationsQuery({
+    ...formState,
+    ppr: formState.ppr === "NO" ? "0" : formState.ppr,
+    superflex: formState.superflex === "YES",
+  });
+
+  return (
+    <>
+      <RecsSummary
+        darkMode={darkMode}
+        recommendations={recommendations}
+        rosterSettings={formState.roster}
+      />
+      <RecsRoundByRound darkMode={darkMode} recommendations={recommendations} />
+      <ProjectedRoster darkMode={darkMode} recommendations={recommendations} />
+    </>
+  );
+}
+
 export default function RecommendationsContent({
   hasDarkMode,
   teams,
@@ -143,6 +174,10 @@ export default function RecommendationsContent({
   const [themeAtom, setThemeAtom] = useAtom(useThemeAtom);
   // sync theme with user settings from server
   useThemeEffect(hasDarkMode, themeAtom, setThemeAtom);
+
+  const [showRecommendations, setShowRecommendations] = useState(false);
+
+  const handleShowRecommendations = () => setShowRecommendations(true);
 
   const {
     formState,
@@ -167,6 +202,7 @@ export default function RecommendationsContent({
               <SettingsInputsSection
                 darkMode={themeAtom === "dark"}
                 formState={formState}
+                handleShowRecommendations={handleShowRecommendations}
                 handleFormChange={handleFormChange}
               />
               <TeamSettingsList
@@ -176,21 +212,12 @@ export default function RecommendationsContent({
                 handleActiveSettings={handleActiveSettings}
               />
             </RecsSettingsRow>
-            {/** @TODO hide this entire section when there are no active recommendations */}
-            <div
-              className={`flex flex-col gap-2 rounded-lg p-2 ${themeAtom === "dark" ? backgroundColors.darkSecondary : backgroundColors.lightSecondary}`}
-            >
-              <div
-                className={`rounded px-2 py-1 text-start ${themeAtom === "dark" ? backgroundColors.darkTertiary : backgroundColors.lightTertiary}`}
-              >
-                <span>starters</span>
-              </div>
-              <div
-                className={`rounded px-2 py-1 text-start ${themeAtom === "dark" ? backgroundColors.darkTertiary : backgroundColors.lightTertiary}`}
-              >
-                <span>bench</span>
-              </div>
-            </div>
+            {showRecommendations && (
+              <PlayerRecommendations
+                darkMode={themeAtom === "dark"}
+                formState={formState}
+              />
+            )}
           </RecsContentCol>
         </RecsFlexContainer>
       </Container.Scrollable>

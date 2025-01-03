@@ -57,8 +57,19 @@ export type Position =
   | "k"
   | "bench";
 
+// export type Roster = {
+//   [key in Position]: { starters?: number; max?: number };
+// };
+
 export type Roster = {
-  [key in Position]: { starters?: number; max?: number };
+  qb: { starters: number; max?: number };
+  rb: { starters: number; max?: number };
+  wr: { starters: number; max?: number };
+  te: { starters: number; max?: number };
+  dst: { starters: number; max?: number };
+  k: { starters: number; max?: number };
+  flex: { starters: number };
+  bench: { max: number };
 };
 
 /** @TODO make this type dynamic by passing in the number of teams as a param */
