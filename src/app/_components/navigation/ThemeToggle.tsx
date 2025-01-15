@@ -10,10 +10,7 @@ function SwitchWrapper({
   handleChange: (e: React.MouseEvent<HTMLDivElement>) => void;
 }>) {
   return (
-    <div
-      className="flex h-6 w-11 flex-row items-center justify-between"
-      onClick={(e) => handleChange(e)}
-    >
+    <div className="h-6 w-12" onClick={(e) => handleChange(e)}>
       {children}
     </div>
   );
@@ -48,8 +45,8 @@ function SwitchCircle({ enabled }: { enabled: boolean }) {
   return (
     <span
       className={`${
-        enabled ? "translate-x-6 bg-white" : "translate-x-1 bg-black"
-      } absolute inline-block h-4 w-4 transform rounded-full`}
+        enabled ? "translate-x-[26px] bg-white" : "translate-x-1 bg-black"
+      } absolute inline-block h-4 w-4 rounded-full transition-transform duration-200 ease-out`}
     />
   );
 }
@@ -72,7 +69,7 @@ export default function ThemeToggle() {
     <SwitchWrapper handleChange={handleChange}>
       <Switch
         defaultChecked={enabled}
-        className={`relative z-10 inline-flex h-6 w-11 items-center rounded-full border border-gray-500 ${enabled ? "bg-black" : "bg-white"} hover:border-gray-800 focus:border-gray-800 focus:outline-none`}
+        className={`relative z-10 flex h-6 w-12 flex-row items-center justify-between rounded-full border ${enabled ? "border-white bg-black" : "border-black bg-white"}`}
         style={{
           boxShadow: `rgb(${
             enabled ? "255 255 255 / 65%" : "0 0 0 / 25%"

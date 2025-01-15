@@ -9,7 +9,7 @@ export default function OuterContainer({
 }) {
   return (
     <div
-      className={`flex w-full flex-col gap-2 rounded-lg p-2 ${darkMode ? backgroundColors.darkSecondary : backgroundColors.lightSecondary}`}
+      className={`flex w-full flex-col justify-stretch gap-2 rounded-lg p-2 ${darkMode ? backgroundColors.darkSecondary : backgroundColors.lightSecondary}`}
     >
       {children}
     </div>

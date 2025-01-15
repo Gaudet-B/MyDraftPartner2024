@@ -10,6 +10,7 @@ import {
   backgroundColors,
   borderColors,
   buttonColors,
+  textColors,
 } from "@designsystem/colors";
 import transition from "@designsystem/class-names/transition";
 import {
@@ -115,11 +116,15 @@ function ButtonImage({
 
 function ButtonText({
   children,
-  expand,
-}: PropsWithChildren<{ expand?: boolean }>) {
+  darkMode,
+}: PropsWithChildren<{ darkMode?: boolean }>) {
   return (
     <div className={`flex w-full justify-start overflow-hidden`}>
-      <span className={`hover:underline`}>{children}</span>
+      <span
+        className={`hover:underline ${darkMode ? textColors.light : textColors.black}`}
+      >
+        {children}
+      </span>
     </div>
   );
 }
@@ -147,7 +152,7 @@ function SidebarButton({
         expand={expand}
       >
         <ButtonImage button={text} darkMode={darkMode} />
-        <ButtonText expand={expand}>{text}</ButtonText>
+        <ButtonText darkMode={darkMode}>{text}</ButtonText>
       </ButtonContainer>
     </ButtonWrapper>
   );

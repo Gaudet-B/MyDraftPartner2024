@@ -126,6 +126,28 @@ function sortByECR(players: Player[]) {
   return [...players].sort((a, b) => a.ecr - b.ecr);
 }
 
+function getRange(pick: number, numOfTeams: number) {
+  const round = Math.ceil(pick / numOfTeams);
+
+  let start = pick,
+    end = pick + 1;
+
+  if (round > 1) start = pick - 1;
+  if (round > 5) start = pick - 2;
+  if (round > 9) start = pick - 5;
+  if (round > 12) start = pick - 8;
+
+  if (pick > 4) end = pick + 2;
+  if (pick > 8) end = pick + 4;
+  if (pick > 12) end = pick + 5;
+  if (pick > 24) end = pick + numOfTeams;
+
+  if (round > 3) end = pick + numOfTeams * 1.5;
+  if (round > 6) end = pick + numOfTeams * 2;
+
+  return [start, end];
+}
+
 function selectLateRoundPlayer(
   players: Player[],
   selected: Record<keyof typeof POSITION_MULTIPLIERS, number>,
@@ -233,14 +255,17 @@ export async function getPickRecs(
     roster: RosterInput;
   },
 ) {
-  const recs: Player[] = [];
+  const recs: Array<{ pick: number; recommendation: Player }> = [];
   const selected = {
-    qb: 0,
-    rb: 0,
-    wr: 0,
-    te: 0,
-    dst: 0,
-    k: 0,
+    players: [] as Array<Player["id"]>,
+    positions: {
+      qb: 0,
+      rb: 0,
+      wr: 0,
+      te: 0,
+      dst: 0,
+      k: 0,
+    },
   };
 
   const { numOfTeams, roster: unformattedRoster, draftPosition } = settings;
@@ -252,22 +277,24 @@ export async function getPickRecs(
   );
 
   for (const pick of picks) {
+    const [start, end] = getRange(pick, numOfTeams);
     // Query range of players around current pick
     const players = await prisma.player.findMany({
       where: {
-        AND: [
-          { currentAdp: { gt: pick - 1 } },
-          /** @TODO this range should vary more based on round (early rounds should have a smaller range) */
-          { currentAdp: { lt: pick + numOfTeams * 2 + 2 } },
-        ],
+        currentAdp: {
+          gt: start,
+          lt: end,
+        },
       },
     });
 
     // Filter and sort players
     const eligiblePlayers = players.filter((player) => {
-      const position = player.position.toLowerCase() as keyof typeof selected;
+      const position =
+        player.position.toLowerCase() as keyof typeof selected.positions;
       return (
-        !recs.includes(player) && selected[position] < roster[position].max
+        !selected.players.includes(player.id) &&
+        selected.positions[position] < roster[position].max
       );
     });
 
@@ -276,7 +303,7 @@ export async function getPickRecs(
     // Select best available player following draft strategy
     const recommendation = selectBestPlayer(
       sortedPlayers,
-      selected,
+      selected.positions,
       { ...settings, roster, ppr: Number(settings.ppr) as 0 | 0.5 | 1 },
       picks.indexOf(pick),
       picks.length,
@@ -284,9 +311,10 @@ export async function getPickRecs(
 
     if (recommendation) {
       const position =
-        recommendation.position.toLowerCase() as keyof typeof selected;
-      selected[position]++;
-      recs.push(recommendation);
+        recommendation.position.toLowerCase() as keyof typeof selected.positions;
+      selected.positions[position]++;
+      selected.players.push(recommendation.id);
+      recs.push({ pick, recommendation });
     }
   }
   return recs;

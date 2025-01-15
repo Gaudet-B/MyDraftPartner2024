@@ -17,7 +17,6 @@ export type RadioGroupItems =
 function RadioTab({
   index,
   lastIndex,
-  key,
   value,
   name,
   form,
@@ -26,7 +25,6 @@ function RadioTab({
 }: {
   index: number;
   lastIndex: number;
-  key: string;
   value: number | string;
   name: string;
   form: string;
@@ -67,7 +65,6 @@ function RadioTab({
         }}
       >
         <Radio
-          key={key}
           value={value}
           className={({ hover, focus, checked }) =>
             `text-gray-800 ${

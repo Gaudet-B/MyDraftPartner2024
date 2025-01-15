@@ -37,7 +37,7 @@ export const recommendationsRouter = createTRPCRouter({
         roster: rosterSchema,
       }),
     )
-    .query(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }) => {
       return await getPickRecs(ctx.db, input);
     }),
 });

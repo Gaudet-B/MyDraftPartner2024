@@ -8,12 +8,16 @@ export default async function Recommendations() {
   const session = await getServerAuthSession();
   const hasDarkMode = session?.user.darkMode;
 
-  const teams = await api.team.getAllTeamsByUser();
+  const teams = session ? await api.team.getAllTeamsByUser() : [];
 
   return (
     <HydrateClient>
       <ContentArea hasDarkMode={!!hasDarkMode}>
-        <RecommendationsContent hasDarkMode={!!hasDarkMode} teams={teams} />
+        <RecommendationsContent
+          hasDarkMode={!!hasDarkMode}
+          teams={teams}
+          session={session}
+        />
       </ContentArea>
     </HydrateClient>
   );
