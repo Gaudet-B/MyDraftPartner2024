@@ -122,14 +122,16 @@ export function FormSubmit({
   withCancel?: boolean;
   darkMode?: boolean;
   disabled?: boolean;
-  orientation?: "center" | "end" | "start";
+  orientation?: "center" | "end" | "start" | "stretch";
 }) {
   const justify =
     orientation === "center"
       ? "justify-center"
-      : orientation === "start"
-        ? "justify-start"
-        : "justify-end";
+      : orientation === "stretch"
+        ? "flex-col items-stretch"
+        : orientation === "start"
+          ? "justify-start"
+          : "justify-end";
 
   return (
     <div className={`flex w-full ${justify} gap-2 p-1`}>

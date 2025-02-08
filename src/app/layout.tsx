@@ -7,7 +7,6 @@ import { TRPCReactProvider } from "~/trpc/react";
 export const metadata: Metadata = {
   title: "MyDraft Partner 2024",
   description: "2024 Fantasy Football draft hub",
-  /** @TODO swap out favicon */
   icons: [{ rel: "icon", url: "/favicon.svg" }],
   /** @TODO add additional metadata (SEO, etc.) */
 };

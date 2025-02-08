@@ -1,13 +1,7 @@
 import { Player, PrismaClient } from "@prisma/client";
 
-const POSITION_MAP = {
-  DST: "dst",
-  K: "k",
-  QB: "qb",
-  RB: "rb",
-  WR: "wr",
-  TE: "te",
-} as const;
+const POSITIONS = ["QB", "RB", "WR", "TE", "DST", "K", "FLEX"] as const;
+const FLEX_POSITIONS = ["RB", "WR", "TE"] as const;
 
 // Position-based value adjustments
 const POSITION_MULTIPLIERS = {
@@ -49,16 +43,47 @@ export type LeagueSettings = {
   roster: RosterSettings;
 };
 
+function getRecommendationSummary(
+  recommendations: Array<{ pick: number; recommendation: Player }>,
+  roster: RosterSettings,
+) {
+  const starters: Array<{ pick: number; recommendation: Player }> = [];
+
+  POSITIONS.forEach((pos) => {
+    const position = pos.toLowerCase() as keyof typeof roster;
+    if (position !== "bench" && position !== "flex") {
+      const startersForPosition = roster[position].starters;
+      const playersForPosition = recommendations.filter(
+        (player) => player.recommendation.position === pos,
+      );
+      starters.push(...playersForPosition.slice(0, startersForPosition));
+    }
+    if (position === "flex") {
+      const flexPositions = [...FLEX_POSITIONS] as Array<string>;
+      const startersForPosition = roster[position].starters;
+      const playersForPosition = recommendations.filter(
+        (player) =>
+          flexPositions.includes(player.recommendation.position) &&
+          !starters
+            .map((p) => p.recommendation.id)
+            .includes(player.recommendation.id),
+      );
+      starters.push(...playersForPosition.slice(0, startersForPosition));
+    }
+  });
+
+  const bench: Array<{ pick: number; recommendation: Player }> =
+    recommendations.filter(
+      (player) =>
+        !starters
+          .map((p) => p.recommendation.id)
+          .includes(player.recommendation.id),
+    );
+
+  return { starters, bench };
+}
+
 function validateAndAddMax(roster: RosterInput): RosterSettings {
-  // let newRoster: RosterSettings;
-  // const keys = Object.keys(roster) as (keyof RosterSettings)[];
-  // keys.forEach((key) => {
-  //   newRoster[key] = key === "bench" ? { ...roster[key]} : key === "flex" ? { ...roster[key]} : {
-  //     starters: roster[key].starters,
-  //     max: roster[key].max || 0,
-  //   }
-  // });
-  // return newRoster;
   return {
     qb: { starters: roster.qb.starters, max: roster?.qb?.max ?? 2 },
     rb: {
@@ -269,6 +294,9 @@ export async function getPickRecs(
   };
 
   const { numOfTeams, roster: unformattedRoster, draftPosition } = settings;
+  console.log("numOfTeams", numOfTeams);
+  console.log("draftPosition", draftPosition);
+  console.log("roster", unformattedRoster);
   const roster = validateAndAddMax(unformattedRoster);
   const picks = getDraftOrder(
     numOfTeams,
@@ -276,6 +304,7 @@ export async function getPickRecs(
     getNumOfRounds(roster),
   );
 
+  console.log("picks", picks);
   for (const pick of picks) {
     const [start, end] = getRange(pick, numOfTeams);
     // Query range of players around current pick
@@ -317,5 +346,6 @@ export async function getPickRecs(
       recs.push({ pick, recommendation });
     }
   }
-  return recs;
+  console.log("recs", recs.length);
+  return getRecommendationSummary(recs, roster);
 }

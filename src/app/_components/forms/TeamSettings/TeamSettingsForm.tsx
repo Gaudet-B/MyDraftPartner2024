@@ -8,10 +8,12 @@ import { SettingsValuesType } from "~/app/dashboard/teams/hooks/useTeamForm";
 
 export default function TeamSettingsForm({
   editMode,
+  hideRosterLabel,
   teamSettings,
   handleSettingsChange,
 }: {
   editMode: boolean;
+  hideRosterLabel?: boolean;
   teamSettings?: SettingsValuesType;
   handleSettingsChange: (settings: SettingsValuesType) => void;
 }) {
@@ -62,6 +64,7 @@ export default function TeamSettingsForm({
       handleRosterChange={handleRosterChange}
       darkMode={themeAtom === "dark"}
       editMode={editMode}
+      hideRosterLabel={hideRosterLabel}
     />
   );
 }

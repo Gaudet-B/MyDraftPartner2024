@@ -9,7 +9,7 @@ import {
   TableHeadCell,
   TableHeadRow,
 } from "../table";
-import { ColumnInput, generateColumns } from "../table/util";
+import { Column, ColumnInput, generateColumns } from "../table/util";
 import { backgroundColors } from "../colors";
 
 function HeadSeparator({
@@ -30,6 +30,38 @@ function HeadSeparator({
   );
 }
 
+function Head({
+  darkMode,
+  columns,
+}: {
+  darkMode: boolean;
+  columns: Array<Column>;
+}) {
+  return (
+    <TableHead>
+      <TableHeadRow
+        className={
+          darkMode
+            ? backgroundColors.darkSecondary
+            : backgroundColors.lightSecondary
+        }
+      >
+        {columns.map((col, idx) => (
+          <TableHeadCell
+            key={`column-header-${idx}-${col.label}`}
+            topLeft={idx === 0}
+            topRight={idx === columns.length - 1}
+          >
+            {col.label === "currentAdp" ? "adp" : idx < 2 ? "" : col.label}
+          </TableHeadCell>
+        ))}
+      </TableHeadRow>
+
+      <HeadSeparator darkMode={darkMode} length={columns.length} />
+    </TableHead>
+  );
+}
+
 function BodySeparator({
   darkMode,
   length,
@@ -45,6 +77,53 @@ function BodySeparator({
         <td key={`body-separator-${idx}`} className="" />
       ))}
     </tr>
+  );
+}
+
+function Body({
+  darkMode,
+  columns,
+  starters,
+  bench,
+  positions,
+}: {
+  darkMode: boolean;
+  columns: Array<Column>;
+  starters: Array<PlayerType>;
+  bench: Array<PlayerType>;
+  positions: Array<Uppercase<keyof RosterType>>;
+}) {
+  return (
+    <TableBody>
+      {starters.map((player, idx) => (
+        <TableBodyRow
+          key={`starters-row-${idx}-${player.position}`}
+          className={idx % 2 === 0 ? "bg-gray-100" : ""}
+        >
+          {columns.map((col, i) => (
+            <TableBodyCell key={`starters-row-${idx}-cell-${i}-${col.label}`}>
+              {i === 0 && positions[idx]}
+              {i !== 0 && col.getValue(player)}
+            </TableBodyCell>
+          ))}
+        </TableBodyRow>
+      ))}
+
+      <BodySeparator darkMode={darkMode} length={columns.length} />
+
+      {bench.map((player, idx) => (
+        <TableBodyRow
+          key={`bench-row-${idx}-${player.position}`}
+          className={idx % 2 === 0 ? "bg-gray-100" : ""}
+        >
+          {columns.map((col, i) => (
+            <TableBodyCell key={`bench-row-${idx}-cell${i}-${col.label}`}>
+              {i !== 0 && col.getValue(player)}
+            </TableBodyCell>
+          ))}
+        </TableBodyRow>
+      ))}
+    </TableBody>
   );
 }
 
@@ -73,74 +152,32 @@ function _getStartersPositions(rosterSettings: RosterType) {
 
 export function RosterTable({
   columns,
-  darkMode,
   starters,
   bench,
   rosterSettings,
+  // darkMode = false,
+  theme = "light",
 }: {
-  /** @TODO make this more generic to be more dynamic */
-  columns: Array<ColumnInput | string>;
-  darkMode: boolean;
+  // columns: Array<ColumnInput | string>;
+  columns: (theme: "dark" | "light") => Array<ColumnInput | string>;
   starters: Array<PlayerType>;
   bench: Array<PlayerType>;
   rosterSettings: RosterType;
+  // darkMode?: boolean;
+  theme?: "dark" | "light";
 }) {
-  const formattedColumns = generateColumns(columns);
+  const formattedColumns = generateColumns(columns(theme));
   const formattedPositions = _getStartersPositions(rosterSettings);
   return (
     <TableContainer className="w-full p-2">
-      <TableHead>
-        <TableHeadRow
-          className={
-            darkMode
-              ? backgroundColors.darkSecondary
-              : backgroundColors.lightSecondary
-          }
-        >
-          {formattedColumns.map((col, idx) => (
-            <TableHeadCell
-              key={`column-header-${idx}-${col.label}`}
-              topLeft={idx === 0}
-              topRight={idx === formattedColumns.length - 1}
-            >
-              {col.label === "currentAdp" ? "adp" : idx < 2 ? "" : col.label}
-            </TableHeadCell>
-          ))}
-        </TableHeadRow>
-
-        <HeadSeparator darkMode={darkMode} length={formattedColumns.length} />
-      </TableHead>
-
-      <TableBody>
-        {starters.map((player, idx) => (
-          <TableBodyRow
-            key={`starters-row-${idx}-${player.position}`}
-            className={idx % 2 === 0 ? "bg-gray-100" : ""}
-          >
-            {formattedColumns.map((col, i) => (
-              <TableBodyCell key={`starters-row-${idx}-cell-${i}-${col.label}`}>
-                {i === 0 && formattedPositions[idx]}
-                {i !== 0 && col.getValue(player)}
-              </TableBodyCell>
-            ))}
-          </TableBodyRow>
-        ))}
-
-        <BodySeparator darkMode={darkMode} length={formattedColumns.length} />
-
-        {bench.map((player, idx) => (
-          <TableBodyRow
-            key={`bench-row-${idx}-${player.position}`}
-            className={idx % 2 === 0 ? "bg-gray-100" : ""}
-          >
-            {formattedColumns.map((col, i) => (
-              <TableBodyCell key={`bench-row-${idx}-cell${i}-${col.label}`}>
-                {i !== 0 && col.getValue(player)}
-              </TableBodyCell>
-            ))}
-          </TableBodyRow>
-        ))}
-      </TableBody>
+      <Head columns={formattedColumns} darkMode={theme === "dark"} />
+      <Body
+        columns={formattedColumns}
+        darkMode={theme === "dark"}
+        starters={starters}
+        bench={bench}
+        positions={formattedPositions}
+      />
     </TableContainer>
   );
 }

@@ -2,6 +2,8 @@ import { Component, PropsWithChildren } from "react";
 import transition from "../class-names/transition";
 import { backgroundColors } from "../colors";
 
+export type ContainerType = "Boxy" | "Scrollable" | "Wide";
+
 function BoxyContainer({
   children,
   darkMode = false,
@@ -19,7 +21,9 @@ function BoxyContainer({
 }
 
 function ScrollableContainer({ children }: PropsWithChildren) {
-  return <div className="h-[80vh] overflow-auto">{children}</div>;
+  return (
+    <div className="h-[80vh] overflow-y-auto overflow-x-hidden">{children}</div>
+  );
 }
 
 function WideContainer({

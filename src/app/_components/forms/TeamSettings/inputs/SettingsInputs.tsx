@@ -27,6 +27,7 @@ export function SettingsInputs({
   values,
   handleClick,
   handleRosterChange,
+  hideRosterLabel,
   darkMode = false,
   editMode = false,
 }: {
@@ -40,6 +41,7 @@ export function SettingsInputs({
     startersOrMax: "starters" | "max",
     change: -1 | 1,
   ) => void;
+  hideRosterLabel?: boolean;
   darkMode?: boolean;
   editMode?: boolean;
 }) {
@@ -163,12 +165,20 @@ export function SettingsInputs({
 
       {values.roster && (
         <SettingsGroup
-          label={"roster"}
+          label={hideRosterLabel ? undefined : "roster"}
           form={`roster`}
           darkMode={darkMode}
           editMode
         >
-          <div className={editMode ? "col-span-2" : "col-span-1"}>
+          <div
+            className={
+              hideRosterLabel
+                ? "col-span-2"
+                : editMode
+                  ? "col-span-2"
+                  : "col-span-1"
+            }
+          >
             <RosterDetails
               darkMode={darkMode}
               editMode={editMode}

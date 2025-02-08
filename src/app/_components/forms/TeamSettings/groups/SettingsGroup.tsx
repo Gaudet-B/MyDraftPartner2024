@@ -35,17 +35,19 @@ export default function SettingsGroup({
   darkMode: boolean;
   editMode: boolean;
   form: string;
-  label: string;
+  label?: string;
   value?: string | number | boolean;
 }>) {
   return (
     <>
-      <label
-        className={`col-span-1 flex flex-col justify-start pt-[11px] leading-relaxed`}
-        htmlFor={form}
-      >
-        <span>{label}</span>
-      </label>
+      {label && (
+        <label
+          className={`col-span-1 flex flex-col justify-start pt-[11px] leading-relaxed`}
+          htmlFor={form}
+        >
+          <span>{label}</span>
+        </label>
+      )}
       {editMode ? (
         children
       ) : (
